@@ -1,0 +1,19 @@
+
+public class PrimesTester 
+{
+
+	public static void main(String[] args) 
+	{
+		int numPrimes;
+		
+		if (args.length > 0)
+		{
+			numPrimes = args[0];
+		}
+		
+		ComputePrimes cp = new ComputePrimes(numPrimes);
+		
+		//cp.isprime(1000001);
+	}
+	
+}

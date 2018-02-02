@@ -1,0 +1,51 @@
+import java.util.*
+
+public class ComputePrimes 
+{	
+	private ArrayList<Integer> primes[];
+
+	public ComputePrimes(int numPrimes)
+	{
+		primes = new int[numPrimes];
+		
+		primes[0] = 2;
+
+		int i = 0;
+		int num = 2;
+		
+		while(i <primes.length)
+		{
+			if (isprime(num))
+			{
+				primes[i] = num;
+				i++;
+			}
+			num++;
+		}
+		
+		//print primes array
+		System.out.print("primes[] = ");
+		for (i =0; i<primes.length; i++)
+		{
+			System.out.print(" " + primes[i]);
+		}
+		
+		System.out.println();
+
+	}
+
+
+	public boolean isprime (int n)
+	{
+		//isprime checks whether the value is prime and returns true or false accordingly
+
+		for (int i = 0; primes[i] <= Math.sqrt(n); i++)
+		{
+			if (n % primes[i] == 0)
+				return false;	
+		}		
+
+		return true;
+	}
+
+}

@@ -1,0 +1,10 @@
+
+public class PrimesTester 
+{
+
+	public static void main(String[] args) 
+	{
+		ComputePrimes cp = new ComputePrimes(1);
+	}
+	
+}

@@ -1,0 +1,42 @@
+
+public class ComputePrimes 
+{
+
+	public static void main(String[] args) 
+	{
+		//instantiate a new class to enable access to all methods of the class
+		ComputePrimes cp = new ComputePrimes();
+
+		int sz = 25;
+
+		int primes[] = new int[sz];
+
+		int i = 0;
+
+		for(int num = 2; i < sz; num++)
+		{
+			if (cp.isprime(num))
+			{
+				primes[i] = num;
+				i++;
+			}
+		}
+
+
+	}
+
+
+	public boolean isprime (int n)
+	{
+		//isprime checks whether the value is prime and returns true or false accordingly
+
+		for (int i = 2; i < n; i++)
+		{
+			if (n % i == 0)
+				return false;	
+		}		
+
+		return true;
+	}
+
+}

@@ -1,0 +1,34 @@
+import java.util.Scanner;
+
+public class PrimesTester 
+{
+
+	public static void main(String[] args) 
+	{
+		int numPrimes;
+		
+//		if (args.length > 0)
+//		{
+//			numPrimes = Integer.parseInt(args[0]);
+//		}
+//		else
+//		{
+//			numPrimes = 25;
+//		}
+		
+		
+		Scanner in = new Scanner(System.in); 
+		System.out.print("How many primes? ");
+		
+		numPrimes = in.nextInt();
+
+		ComputePrimes cp = new ComputePrimes(numPrimes);
+		
+		System.out.println("is 97 prime? " + cp.isprime(97));
+		
+		System.out.println("is 1000001 prime? " + cp.isprime(1000001));
+
+		//cp.isprime(1000001);
+	}
+	
+}

@@ -1,0 +1,15 @@
+
+public class ComputePrimes 
+{
+
+	public static void main(String[] args) 
+	{
+		int sz = 25;
+		
+		int primes[sz];
+		
+		
+
+	}
+
+}
