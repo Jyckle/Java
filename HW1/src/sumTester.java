@@ -20,8 +20,20 @@ public class sumTester {
 		
 		sumTester sm = new sumTester();
 		
-		int sum3 = sm.sumMeth(150,450);
+		int sum3 = sm.sumMeth(40,160);
 		System.out.println("Sum from 150 to 450 via method: " + sum3);
+		
+		
+		SumNums sn = new SumNums(150,450);
+		SumNums sn2 = new SumNums(185,315);
+		
+		System.out.println("Sum from 40 to 160 via class: " + sn.fullSum());
+		System.out.println("skipSum from 40 to 160 via class: " + sn.skipSum());
+		
+		System.out.println("Sum from 185 to 315 via class: " + sn2.fullSum());
+		System.out.println("skipSum from 185 to 315 via class: " + sn2.skipSum());
+		
+		
 		
 	}
 	
