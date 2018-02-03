@@ -7,6 +7,7 @@ public class QuizGUI
 	private String[] questions = {"Who's on first?", "Second Base?", "Why?","Tell me the pitcher's name", "Center field?","This is a long quiz, how about a shortstop?"};
 	private String[] corAns = {"Yes", "What", "Left Field", "Tomorrow", "Because", "I don't care!"};
 	private String[] answers;
+	private String result;
 
 	public static void main (String args[])
 	{
@@ -19,12 +20,12 @@ public class QuizGUI
 		JPanel panel = new JPanel ();
 		frame.add (panel);
 
-		JButton wButton = new JButton ("Launch Missiles");
+		JButton wButton = new JButton ("Send Missle Warning Test");
 		panel.add (wButton);
 
-		JLabel text = new JLabel ("This is not a test");
+		JLabel text = new JLabel ("*This is not a test");
 		panel.add (text);
-
+		
 		wButton.addActionListener (
 				new ActionListener()
 				{
@@ -36,8 +37,7 @@ public class QuizGUI
 						while(qNum <= 6)
 						{
 							String question = g.questions[qNum-1];
-//							Object options[] = { "False", "True" };
-
+							
 							selected = JOptionPane.showInputDialog (
 									frame,
 									question,
@@ -47,6 +47,7 @@ public class QuizGUI
 							if (selected == null)
 								selected = "Cancelled";
 							
+//							Object options[] = { "False", "True" };
 //							selected = JOptionPane.showOptionDialog (
 //									null,
 //									question,
@@ -55,25 +56,23 @@ public class QuizGUI
 //									null, options, null );
 
 							g.answers[qNum-1]= selected.toString();
-//							System.out.println(g);
 							qNum++;
 						}
 						
-						System.out.println(g);
-						String result = g.calcScore();
-						System.out.println(result);
+						
+						g.result = g.calcScore();
+						
+						String message;
+						
+						JOptionPane.showMessageDialog(null, "Score: " + g.result + "\n" + "If you're having trouble, check out Abbott and Costello's 'Who's on First' ");
+						frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 						
 					}
 					
+					
 				});
 		
-		
-//		String result = g.calcScore();
-//		System.out.println(result);
-		
-		
-		
-		frame.setSize (200, 200);
+		frame.setSize (300, 300);
 		frame.setVisible (true);
 		frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
 	}
@@ -110,39 +109,6 @@ public class QuizGUI
 		return txtScore;
 		
 	}
-
-//		public void nextQuest(JButton button, int quesNum)
-//		{
-//			button.addActionListener(
-//					new ActionListener()
-//					{
-//						int qNum = quesNum++;
-//						Object selected;
-//						
-//						public void actionPerformed (ActionEvent e)
-//						{
-//							String question = g.questions[0];
-//							Object options[] = { "False", "True" };
-//
-//							selected = JOptionPane.showOptionDialog (
-//									null,
-//									question,
-//									"Question " + qNum,
-//									JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-//									null, options, null );
-//
-//							g.answers[qNum-1]= selected.toString();
-//							System.out.println(g);
-//						}
-//					});
-//						
-//					}
-//					
-//					
-//					
-//					
-//		)
-//		}
 
 
 }
