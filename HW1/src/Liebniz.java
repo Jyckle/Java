@@ -2,13 +2,12 @@
 public class Liebniz {
 	public static void main(String[] args) {
 		
-		int acc = 50;
+		int acc = 1000;
 		double piApprox = 0.0;
-		for (int i = 0; i< acc; i++)
+		for (double i = 0; i< acc; i++)
 		{
-			double next = ((-1)^i) * 1/(2.0*i + 1.0);
+			double next = Math.pow(-1.0,i) * 1/(2.0*i + 1.0);
 			piApprox += next;
-			System.out.println(piApprox);
 		}
 		
 		piApprox = piApprox * 4;
