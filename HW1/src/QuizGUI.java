@@ -61,9 +61,7 @@ public class QuizGUI
 						
 						
 						g.result = g.calcScore();
-						
-						String message;
-						
+												
 						JOptionPane.showMessageDialog(null, "Score: " + g.result + "\n" + "If you're having trouble, check out Abbott and Costello's 'Who's on First' ");
 						frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 						
