@@ -1,5 +1,7 @@
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 
 import javax.swing.Icon;
 
@@ -23,6 +25,14 @@ public class TopHatIcon implements Icon {
 	}
 
 	public void paintIcon(Component c, Graphics g, int x, int y) {
+		Graphics2D g2 = (Graphics2D) g;
+		
+		Rectangle2D.Double bodyRect = new Rectangle2D.Double(
+				x + width/3,
+				y + height/8,
+				width/3,
+				height/2);
+		
 		
 	}
 
