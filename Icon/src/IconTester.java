@@ -4,10 +4,11 @@ public class IconTester {
 	public static void main(String[] args) {
 		JOptionPane.showMessageDialog(
 				null,
-				"MY DUDES",
-				"IT IS WEDNESDAY",
+				"LOOK AT IT",
+				"LOOK AT MY PRETTY HAT",
 				JOptionPane.INFORMATION_MESSAGE,
-				new ImageIcon("Wednesday.png"));
+				new TopHatIcon(500,300));
+//				new ImageIcon("Wednesday.png"));
 //				new MarsIcon(500));
 	}
 }
