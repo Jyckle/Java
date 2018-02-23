@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class DecimalRadixConv {
 	
@@ -10,18 +11,35 @@ public class DecimalRadixConv {
 	}
 	
 	
-	public ArrayList<Character> DecimalToRadix(int decNum){
-		ArrayList<Character> radixNum = new ArrayList<Character>();
+	public String DecimalToRadix(int decNum){
+		String radixNum = "";
 		int q;
 		int r;
+		char x;
 		do {
 			q = decNum/base;
 			r = decNum % base;
-			radixNum.add((char) r);
+			x = singleDigitRepr(r);
+			radixNum = x + radixNum;
+			decNum = q;
 		}
 		while (q!=0);
 		
 		return radixNum;
+	}
+	
+	private char singleDigitRepr(int num)
+	{
+		if(num <10)
+			return (char) ('0' + num);
+		else if(num < (10+26))
+			return (char) ('A'+ (num - 10));
+		else
+		{
+			System.err.println("Digit too large (base 36 or less please");
+			return 0;
+		}
+		
 	}
 	
 	
