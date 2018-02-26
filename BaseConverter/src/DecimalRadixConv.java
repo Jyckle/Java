@@ -11,7 +11,7 @@ public class DecimalRadixConv {
 	}
 	
 	
-	public String DecimalToRadix(int decNum){
+	public String ToRadix(int decNum){
 		String radixNum = "";
 		int q;
 		int r;
