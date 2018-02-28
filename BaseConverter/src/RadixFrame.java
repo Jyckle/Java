@@ -1,4 +1,5 @@
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -13,27 +14,28 @@ public class RadixFrame extends JFrame {
 	public RadixFrame() {
 		super("Base Converter");
 		
-		JButton toRadButton = new JButton("Convert To Radix ");
-		JButton toDecButton = new JButton("Convert To Decimal");
+		char c = 0x2192;
+		char c2 = 0x2190;
+		JButton toRadButton = new JButton(String.valueOf(c));
+		JButton toDecButton = new JButton(String.valueOf(c2));
 
-		final int FIELD_WIDTH = 20;
-		final JTextField radText = new JTextField(FIELD_WIDTH);
-		final JTextField decText = new JTextField(FIELD_WIDTH);
-		final JTextField baseText = new JTextField(FIELD_WIDTH);
-		radText.setText("Radix value here");
-		decText.setText("Decimal value here");
-		baseText.setText("Base value here");
-
+		final JTextField radText = new JTextField("Radix Number");
+		final JTextField decText = new JTextField("Decimal Number");
+		final JTextField baseText = new JTextField("Base");
+//		radText.setText("Radix value here");
+//		decText.setText("Decimal value here");
+//		baseText.setText("Base value here");
+		
 
 		toRadButton.addActionListener (new toRadixListener (radText, decText, baseText));
 		toDecButton.addActionListener (new ButtonListener (decText, "Some Number in Decimal"));
 
 		setLayout(new FlowLayout());
 
-		add(toRadButton);
-		add(toDecButton);
 		add(decText);
+		add(toRadButton);
 		add(baseText);
+		add(toDecButton);
 		add(radText);
 		
 

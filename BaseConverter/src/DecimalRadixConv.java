@@ -28,6 +28,20 @@ public class DecimalRadixConv {
 		return radixNum;
 	}
 	
+//	public String ToDecimal(String radNum) {
+//		String decNum = "";
+//		for(int i = 0; i < radNum.length(); i++) {
+//			char cChar = radNum.charAt(i);
+//			if(cChar >= 'A' && cChar <= 'Z') {
+//				
+//			}
+//			else if(Integer.parseInt(cChar).isNumeric())
+//		}
+//		
+//		return decNum;
+//		
+//	}
+	
 	private char singleDigitRepr(int num)
 	{
 		if(num <10)
