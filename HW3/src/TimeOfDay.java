@@ -42,6 +42,7 @@ public class TimeOfDay {
 	}
 	
 	public int secondsFrom(TimeOfDay other) {
+		
 		return 0;
 	}
 	
