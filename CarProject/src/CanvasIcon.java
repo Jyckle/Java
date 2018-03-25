@@ -7,9 +7,9 @@ import javax.swing.*;
 */
 public class CanvasIcon implements Icon
 {
-   public CanvasIcon(MoveableShape shape, int width, int height)
+   public CanvasIcon(ArrayList<MoveableShape> shapes, int width, int height)
    {
-      this.shape = shape;
+      this.shapes = shapes;
       this.width = width;
       this.height = height;
    }
@@ -27,10 +27,13 @@ public class CanvasIcon implements Icon
    public void paintIcon(Component c, Graphics g, int x, int y)
    {
       Graphics2D g2 = (Graphics2D) g;
-      shape.draw(g2);
+      for (MoveableShape shape: shapes) {
+    	  shape.draw(g2);
+      }
+     
    }
 
-   private int width;
+private int width;
    private int height;
-   private MoveableShape shape;
+   private ArrayList<MoveableShape> shapes;
 }
