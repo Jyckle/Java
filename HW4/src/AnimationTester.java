@@ -33,10 +33,12 @@ public class AnimationTester
       shapes.add(shape2);
       shapes.add(shape3);
 
-      final CanvasComponent canvas = new CanvasComponent(shapes,
+      CanvasIcon icon = new CanvasIcon(shapes,
             ICON_WIDTH, ICON_HEIGHT);
 
-      frame.add(canvas);
+      final JLabel label = new JLabel(icon);
+      frame.setLayout(new FlowLayout());
+      frame.add(label);
 
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       frame.pack();
@@ -53,7 +55,7 @@ public class AnimationTester
     		  shape2.translate(-1, 0);
     		  shape3.translate(-2, 2);
     		  shape4.translate(0, 6);
-    		  canvas.repaint();
+    		  label.repaint();
     		  time += DELAY;
     		  
     		  if (time > 300*DELAY)
