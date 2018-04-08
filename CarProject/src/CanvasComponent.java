@@ -17,7 +17,7 @@ public class CanvasComponent extends JComponent
    }
    
 
-   public void paintComponent(Component c, Graphics g, int x, int y)
+   public void paintComponent(Graphics g)
    {
       Graphics2D g2 = (Graphics2D) g;
       for (MoveableShape shape: shapes) {
