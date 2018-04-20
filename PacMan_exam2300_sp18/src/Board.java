@@ -498,7 +498,7 @@ public class Board extends JPanel
         {
             int key = e.getKeyCode();
 
-            if (key == Event.LEFT || key == Event.RIGHT
+            if (key == KeyEvent.VK_LEFT || key == Event.RIGHT
                     || key == Event.UP || key == Event.DOWN)
             {
                 req_dx = 0;

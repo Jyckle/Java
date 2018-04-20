@@ -100,6 +100,88 @@ public class BlackGamePiece extends GamePiece {
 		}
 		
 	}
+
+
+
+	protected boolean hasJump ()
+	{
+			
+		boolean result1 = false;
+		boolean result2 = false;
+		boolean result3 = false;
+		boolean result4 = false;
+		boolean resultSubmit = false;
+
+		try {
+			result1 = validJump(new Position(pos.r-2, pos.c+2));
+		}
+		catch (ArrayIndexOutOfBoundsException e) {
+				//System.out.println("arrayError");
+				result1 = false;
+			}
+		catch (NullPointerException e)
+			{
+				//System.out.println("pointerError");
+				result1 = false;
+			}
+		finally {} 
+		
+		
+		try {
+			result2 = validJump(new Position(pos.r-2, pos.c-2));
+		}
+		catch (ArrayIndexOutOfBoundsException e) {
+				//System.out.println("arrayError");
+				result2 = false;
+			}
+		catch (NullPointerException e)
+			{
+				//System.out.println("pointerError");
+				result2 = false;
+			}
+		finally {} 
+		
+		
+		try {
+			result3 = validJump(new Position(pos.r+2, pos.c+2));
+		}
+		catch (ArrayIndexOutOfBoundsException e) {
+				//System.out.println("arrayError");
+				result3 = false;
+			}
+		catch (NullPointerException e)
+			{
+				//System.out.println("pointerError");
+				result3 = false;
+			}
+		finally {} 
+		
+		
+		try {
+			result4 = validJump(new Position(pos.r+2, pos.c-2));
+			}
+		catch (ArrayIndexOutOfBoundsException e) {
+				//System.out.println("arrayError");
+				result4 = false;
+			}
+		catch (NullPointerException e)
+			{
+				//System.out.println("pointerError");
+				result4 = false;
+			}
+		finally {} 
+		
+			
+			
+			 
+			 
+		resultSubmit = result1||result2||result3||result4;
+		//System.out.println("result");
+		return resultSubmit;
+			
+		}
+		
+	}
 	
 
-}
+

@@ -73,7 +73,7 @@ public class GhostShape implements MoveableShape
 			py = y / width;
 
 			count = 0;
-
+			
 			if ((screenData[py][px] & 1) == 0 && dx != 1)
 			{
 				sdx[count] = -1;
@@ -121,6 +121,7 @@ public class GhostShape implements MoveableShape
 		y = y + (dy * speed);
 	}
 
+	//checks if the given coordinates are within the ghost
 	public boolean contains (int pacx, int pacy)
 	{
 		if (pacx > (x - 12) && pacx < (x + 12)
@@ -130,6 +131,7 @@ public class GhostShape implements MoveableShape
 			return false;
 	}
 
+	//defines the ghost graphics properties
 	public void draw (Graphics2D g2)
 	{
 		Ellipse2D.Double head = new Ellipse2D.Double (x, y, 0.9*width, 0.9*width);

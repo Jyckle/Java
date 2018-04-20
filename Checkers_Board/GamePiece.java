@@ -71,6 +71,7 @@ public abstract class GamePiece implements PlayableGamePiece // implementation /
 	
 	protected abstract void setKing(Position targetPos);
 	
+	protected abstract boolean hasJump();
 	
 	public void move (Position targetPos)
 	{

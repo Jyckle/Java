@@ -15,6 +15,7 @@ public class CheckerBoard extends JPanel // child class
 	
 	private int RedPieces = 12;
 	private int BlackPieces = 12;
+	private boolean inPlay = false; 
 
 	private Player player;
 	private GamePiece selectedPiece = null;
@@ -72,7 +73,7 @@ public class CheckerBoard extends JPanel // child class
 		public void mousePressed (MouseEvent event)
 		{
 			Point mousePoint = event.getPoint();
-
+			boolean firstJump = false;
 			if (sq.contains (mousePoint))
 			{
 				if (selectedPiece == null)
@@ -87,28 +88,46 @@ public class CheckerBoard extends JPanel // child class
 				{
 					Position pos = sq.getPosition();
 
-					if (pos.equals (selectedPiece.pos()))
+					if (pos.equals (selectedPiece.pos()) && !inPlay)
 					{
 						selectedPiece.setPieceSelected (false);	 // de-select piece
 						selectedPiece = null;					 //  "          "
 					}
-					else if (selectedPiece.validMove (pos))
+					//else if (selectedPiece.validMove (pos) ) // for multiple jumps the code needs to go in here with something like continue jump method
+					else if ((selectedPiece.validNonJump(pos) && !firstJump)|| selectedPiece.validJump(pos)   )
 					{
+						
+						
+						if (selectedPiece.validJump(pos))
+							firstJump = true;
+						
 						selectedPiece.move (pos);				 // move selected piece
 						
-						player = Player.switchPlayer(player);
-						if ((selectedPiece.getRemoved()) && (player == Player.BLACK))
+						
+						if ((selectedPiece.getRemoved()) && (player == Player.RED))
 						{
 							BlackPieces = BlackPieces -1;
 						}
-						else if ((selectedPiece.getRemoved()) && (player == Player.RED))
+						else if ((selectedPiece.getRemoved()) && (player == Player.BLACK))
 						{
 							RedPieces = RedPieces -1;
 						}
 						
-						selectedPiece.setPieceSelected (false);	 // de-select piece
-						selectedPiece = null;
-						checkGameEnd();
+						
+						if (firstJump && selectedPiece.hasJump())
+						{
+							inPlay  = true;// code to force player to only move selected piece // have boolean that exits other is statements to force back to this location
+						}
+						else
+						{
+							inPlay = false; 
+							player = Player.switchPlayer(player);
+							selectedPiece.setPieceSelected (false);	 // de-select piece
+							selectedPiece = null;
+							checkGameEnd();
+						}
+						
+						
 					}
 				}
 			}
@@ -117,7 +136,7 @@ public class CheckerBoard extends JPanel // child class
 		}
 	}
 	
-	public void checkGameEnd()
+	private void checkGameEnd()
 	{
 		repaint();
 		if (RedPieces == 0)
@@ -169,7 +188,10 @@ public class CheckerBoard extends JPanel // child class
 	
 	}
 	
-	public void reset() {
+	public void reset()  // any chance that we can use this code for the initialization process as well? it seems silly to have two different methods
+	// which call similar methods
+	{
+		inPlay=false;
 		RedPieces = 12;
 		BlackPieces = 12;
 		
