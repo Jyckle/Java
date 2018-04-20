@@ -122,7 +122,7 @@ public class Board extends JPanel
         initLevel();
     }
     
-    //
+    //transfers level data to the screen, continues with the level
     private void initLevel()
     {
         for (int r = 0; r < N_BLOCKS; r++)
@@ -131,7 +131,8 @@ public class Board extends JPanel
 
         continueLevel();
     }
-
+    
+    //adds the ghosts, and sets the original position of pacman
     private void continueLevel()
     {
     	ghost = new ArrayList<MoveableShape>();
@@ -149,7 +150,8 @@ public class Board extends JPanel
         view_dx = -1;
         view_dy = 0;
     }
-
+    
+    // runs all the game functions
     private void playGame (Graphics2D g2d)
     {
         if (dying)
@@ -163,6 +165,7 @@ public class Board extends JPanel
         }
     }
     
+    // sets up the intro screen
     private void showIntroScreen (Graphics2D g2d)
     {
         g2d.setColor (new Color (0, 32, 48));
@@ -178,7 +181,8 @@ public class Board extends JPanel
         g2d.setFont (small);
         g2d.drawString (s, (SCREEN_SIZE - metr.stringWidth(s)) / 2, SCREEN_SIZE / 2);
     }
-
+    
+    //draws the score in the bottom right corner of the frame
     private void drawScore (Graphics2D g)
     {
         String s = "Score: " + score;
@@ -190,7 +194,8 @@ public class Board extends JPanel
         for (int i = 0; i < pacsLeft; i++)
             g.drawImage (pacman3left, i * 28 + 8, SCREEN_SIZE + 1, this);
     }
-
+    
+    // check if all collectibles are gone
     private void checkMaze()
     {
         boolean finished = true;
@@ -215,7 +220,8 @@ public class Board extends JPanel
             initLevel();
         }
     }
-
+    
+    //reduces number of lives, if none left, then end the game
     private void death()
     {
         pacsLeft--;
@@ -225,7 +231,8 @@ public class Board extends JPanel
 
         continueLevel();
     }
-
+    
+    //move the ghosts and check for collision with pacman
     private void moveGhosts (Graphics2D g2d)
     {
         for (int i = 0; i < numGhosts; i++)
@@ -238,12 +245,14 @@ public class Board extends JPanel
                 dying = true;
         }
     }
-
+    
+    //pacman's movement properties
     private void movePacman()
     {
     	int px, py;
         short ch;
-
+        
+        // if the change in distance is okay, set it
         if (req_dx == -pacman_dx && req_dy == -pacman_dy)
         {
             pacman_dx = req_dx;
@@ -251,7 +260,8 @@ public class Board extends JPanel
             view_dx = pacman_dx;
             view_dy = pacman_dy;
         }
-
+        
+        // check pacmans location and set the px, py values
         if (pacman_x % BLOCK_SIZE == 0 && pacman_y % BLOCK_SIZE == 0)
         {
             px = pacman_x / BLOCK_SIZE;
