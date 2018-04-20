@@ -1,3 +1,7 @@
+/*
+ * this class is the main manager of all things contained within the board
+ */
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -7,43 +11,53 @@ import javax.swing.*;
 @SuppressWarnings("serial")
 public class Board extends JPanel
 {
-    private final static int N_BLOCKS = 15;
+    //declares the variables to be used for the screen size
+	private final static int N_BLOCKS = 15;
     private final static int BLOCK_SIZE = 24;
     private final static int SCREEN_SIZE = N_BLOCKS * BLOCK_SIZE;
     private final static int BORDER_SIZE = 25;
     
+    //variables affecting pacman character
     private final static int PACMAN_SPRITE_DELAY = 2;
     private final static int PACMAN_SPRITE_NUM_POS = 4;
     
+    //variables affecting level and speed
     protected final static int MAX_LEVEL = 6;
     private final static int MAX_GHOSTS = 12;
     private final static int PACMAN_SPEED = 6;
-
+    
+    //variables affecting sprite properties
     private int spriteDelayCount = PACMAN_SPRITE_DELAY;
     private int spriteIncr = 1;
     private int spriteImgIdx = 0;
-
+    
+    //booleans to check for if ingame or dying
     private boolean inGame = false;
     private boolean dying = false;
-
+    
+    //to keep track of level and number of ghosts
     private int currLevel = 1;
     private int numGhosts = 5;
     private int pacsLeft, score;
     
+    //keeps track of the ghosts
     private ArrayList<MoveableShape> ghost;
-
+    
+    //all images for pacman
     private Image pacman1;
     private Image pacman2up, pacman2left, pacman2right, pacman2down;
     private Image pacman3up, pacman3down, pacman3left, pacman3right;
     private Image pacman4up, pacman4down, pacman4left, pacman4right;
-
+    
+    //positioning variables
     private int pacman_x, pacman_y, pacman_dx, pacman_dy;
     private int req_dx, req_dy, view_dx, view_dy;
 
     private Timer timer;
-
+    
     private short[][] screenData;
     
+    //contains all the data for the level
     private final short levelData[][] =
 	    	{
 	    		{ 19, 26, 26, 26, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 22 },
@@ -63,6 +77,7 @@ public class Board extends JPanel
 	    		{ 9, 8, 8, 8, 8, 8, 8, 8, 8, 8, 25, 24, 24, 24, 28 }
 	    	};
 
+    //calls all of the necessary methods for instantiating a Board
     public Board()
     {
         setMinimumSize (new Dimension (SCREEN_SIZE + BORDER_SIZE, SCREEN_SIZE + BORDER_SIZE));
@@ -74,6 +89,7 @@ public class Board extends JPanel
         initGame();
     }
     
+    //sets up the creation of the board
     private void initBoard()
     {
         addKeyListener (new PacKeyAdapter());
@@ -81,7 +97,8 @@ public class Board extends JPanel
         setBackground (Color.black);
         setDoubleBuffered (true);        
     }
-
+    
+    //sets up the necessary variables
     private void initVariables()
     {
         screenData = new short[N_BLOCKS][N_BLOCKS];
@@ -93,7 +110,8 @@ public class Board extends JPanel
         });
         timer.start();
     }
-
+    
+    //sets the starting values for the game and initiates a level
     private void initGame()
     {
         pacsLeft = 3;
@@ -103,7 +121,8 @@ public class Board extends JPanel
         
         initLevel();
     }
-
+    
+    //
     private void initLevel()
     {
         for (int r = 0; r < N_BLOCKS; r++)
@@ -498,7 +517,7 @@ public class Board extends JPanel
         {
             int key = e.getKeyCode();
 
-            if (key == KeyEvent.VK_LEFT || key == Event.RIGHT
+            if (key == Event.LEFT || key == Event.RIGHT
                     || key == Event.UP || key == Event.DOWN)
             {
                 req_dx = 0;
