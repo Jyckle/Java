@@ -20,6 +20,12 @@ public class GhostShape implements MoveableShape
 	private int maxLevel;
 
 	private short screenData[][];
+	private int type= 0;
+	
+	private final static int LEFT_WALL = 1;
+    private final static int RIGHT_WALL = 4;
+    private final static int TOP_WALL = 2;
+    private final static int BOTTOM_WALL = 8;
 
 	//Class constructor
 	public GhostShape (short screenData[][], int level, int brd_x, int brd_y,
@@ -55,6 +61,9 @@ public class GhostShape implements MoveableShape
 			dx = -1;
 
 		dy = 0;
+		
+		//select ghosttype randomly
+		type = (int)(Math.random()*4)+1;
 	}
 	
 	//defines all movement properties for the GhostShape
@@ -74,28 +83,29 @@ public class GhostShape implements MoveableShape
 
 			count = 0;
 			
-			if ((screenData[py][px] & 1) == 0 && dx != 1)
+			//four different 
+			if ((screenData[py][px] & LEFT_WALL) == 0 && dx != 1)
 			{
 				sdx[count] = -1;
 				sdy[count] = 0;
 				count++;
 			}
 
-			if ((screenData[py][px] & 2) == 0 && dy != 1)
+			if ((screenData[py][px] & TOP_WALL) == 0 && dy != 1)
 			{
 				sdx[count] = 0;
 				sdy[count] = -1;
 				count++;
 			}
 
-			if ((screenData[py][px] & 4) == 0 && dx != -1)
+			if ((screenData[py][px] & RIGHT_WALL) == 0 && dx != -1)
 			{
 				sdx[count] = 1;
 				sdy[count] = 0;
 				count++;
 			}
 
-			if ((screenData[py][px] & 8) == 0 && dy != -1)
+			if ((screenData[py][px] & BOTTOM_WALL) == 0 && dy != -1)
 			{
 				sdx[count] = 0;
 				sdy[count] = 1;
@@ -134,10 +144,22 @@ public class GhostShape implements MoveableShape
 	//defines the ghost graphics properties
 	public void draw (Graphics2D g2)
 	{
-		Ellipse2D.Double head = new Ellipse2D.Double (x, y, 0.9*width, 0.9*width);
-		Rectangle2D.Double body = new Rectangle2D.Double (x, y+width/3, 0.9*width, 2*width/3);
-		g2.setColor(Color.MAGENTA);
-		g2.fill(head);
-		g2.fill(body);
+		if (type ==1) {
+			Ellipse2D.Double head = new Ellipse2D.Double (x, y, 0.9*width, 0.9*width);
+			Rectangle2D.Double body = new Rectangle2D.Double (x, y+width/3, 0.9*width, 2*width/3);
+			g2.setColor(Color.MAGENTA);
+			g2.fill(head);
+			g2.fill(body);
+		}
+		else if (type ==2) {
+			g2.drawImage(new ImageIcon("pacpix/Ghost4.png").getImage(), x, y, null);
+		}
+		else if (type==3) {
+			g2.drawImage(new ImageIcon("pacpix/Ghost3.png").getImage(), x, y, null);
+		}
+		else if (type==4) {
+			g2.drawImage(new ImageIcon("pacpix/Ghost1.gif").getImage(), x, y, null);
+		}
+		
 	}
 }
