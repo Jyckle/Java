@@ -2,9 +2,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 
 import javax.swing.ImageIcon;
-import javax.swing.Timer;
 
-public class PacmanShape implements MoveableShape {
+public class PacmanShape {
 	
 	//variables affecting pacman character
     private final static int PACMAN_SPRITE_DELAY = 2;
@@ -35,89 +34,83 @@ public class PacmanShape implements MoveableShape {
     	};
     
     //positioning variables
-    private int pacman_x, pacman_y, pacman_dx, pacman_dy;
+    private int x, y, dx, dy;
     private int req_dx, req_dy, view_dx, view_dy;
-
-    private Timer timer;
+    private int block_size;
 
 	private short screenData[][];
-	private int type= 0;
 
 	private final static int LEFT_WALL = 1;
 	private final static int RIGHT_WALL = 4;
 	private final static int TOP_WALL = 2;
 	private final static int BOTTOM_WALL = 8;
+	
 
-	public PacmanShape (short screenData[][], int level, int brd_x, int brd_y,
-			int width)
+	public PacmanShape (short screenData[][], int brd_x, int brd_y,
+			int block_size)
 	{
-		//holds all potential speeds that can be used
-		int validSpeeds[] = {1, 2, 3, 4, 5, 6, 8, 10, 12};
-
-		//ensures that the maximum level of the board is not exceeded
-		if (level > Board.MAX_LEVEL)
-			level = maxLevel;
-
+		
 		//set the class attributes equal to the passed in variables
 		this.screenData = screenData;
-		this.x = brd_x * width;
-		this.y = brd_y * width;
-		this.width = width;
-
-		//sets the desired speed for a level
-		int levelSpeed = level + 2;
-		int random = (int) (Math.random() * levelSpeed);
-
-		if (random > speed) {
-			random = speed;
-		}
-
-		//randomly selects a speed value to use
-		speed = validSpeeds[random];
-
-		if (random % 2 == 0)
-			dx = 1;
-		else
-			dx = -1;
-
-		dy = 0;
-
-		//select ghosttype randomly
-		type = (int)(Math.random()*4)+1;
+		this.x = brd_x * block_size;
+		this.y = brd_y * block_size;
+		this.block_size= block_size;
+		req_dx = 0;
+		req_dy = 0;
+		view_dx = -1;
+		view_dy = 0;
 	}
 
-	@Override
+	
+	//Draw Properties for Pacman
 	public void draw(Graphics2D g2) {
-		// TODO Auto-generated method stub
+        
+		if (view_dx == -1)
+            g2.drawImage(pacImages[2][spriteImgIdx], x + 1,y + 1, null);
+        else if (view_dx == 1)
+        	g2.drawImage(pacImages[3][spriteImgIdx], x + 1,y + 1, null);
+        else if (view_dy == -1)
+        	g2.drawImage(pacImages[0][spriteImgIdx], x + 1,y + 1, null);
+        else
+        	g2.drawImage(pacImages[1][spriteImgIdx], x + 1,y + 1, null);
 
 	}
+	
+    //run the animation with all images
+    public void doAnim()
+    {
+        spriteDelayCount--;
 
-	@Override
+        if (spriteDelayCount <= 0) {
+            spriteDelayCount = PACMAN_SPRITE_DELAY;
+            spriteImgIdx = spriteImgIdx + spriteIncr;
+
+            if (spriteImgIdx == (PACMAN_SPRITE_NUM_POS - 1) || spriteImgIdx == 0) {
+                spriteIncr = -spriteIncr;
+            }
+        }
+    }
+
+	
 	public void move() {
 		int px, py;
 		short ch;
 
 		// if the change in distance is okay, set it
-		if (req_dx == -pacman_dx && req_dy == -pacman_dy)
+		if (req_dx == -dx && req_dy == -dy)
 		{
-			pacman_dx = req_dx;
-			pacman_dy = req_dy;
-			view_dx = pacman_dx;
-			view_dy = pacman_dy;
+			dx = req_dx;
+			dy = req_dy;
+			view_dx = dx;
+			view_dy = dy;
 		}
 
 		// check pacmans location and set the px, py values
-		if (pacman_x % BLOCK_SIZE == 0 && pacman_y % BLOCK_SIZE == 0)
+		if (x % block_size == 0 && y % block_size == 0)
 		{
-			px = pacman_x / BLOCK_SIZE;
-			py = pacman_y / BLOCK_SIZE;
+			px = x / block_size;
+			py = y / block_size;
 			ch = screenData[py][px];
-
-			if ((ch & YUMMY_BIT) != 0)
-			{
-				screenData[py][px] = (short) (ch & REMOVE_YUMMY_BIT);
-				score++;
-			}
 
 			if (req_dx != 0 || req_dy != 0)
 			{
@@ -126,32 +119,41 @@ public class PacmanShape implements MoveableShape {
 						|| (req_dx == 0 && req_dy == -1 && (ch & TOP_WALL) != 0)
 						|| (req_dx == 0 && req_dy == 1 && (ch & BOTTOM_WALL) != 0)))
 				{
-					pacman_dx = req_dx;
-					pacman_dy = req_dy;
-					view_dx = pacman_dx;
-					view_dy = pacman_dy;
+					dx = req_dx;
+					dy = req_dy;
+					view_dx = dx;
+					view_dy = dy;
 				}
 			}
 
 			// Check for standstill
-			if ((pacman_dx == -1 && pacman_dy == 0 && (ch & LEFT_WALL) != 0)
-					|| (pacman_dx == 1 && pacman_dy == 0 && (ch & RIGHT_WALL) != 0)
-					|| (pacman_dx == 0 && pacman_dy == -1 && (ch & TOP_WALL) != 0)
-					|| (pacman_dx == 0 && pacman_dy == 1 && (ch & BOTTOM_WALL) != 0))
+			if ((dx == -1 && dy == 0 && (ch & LEFT_WALL) != 0)
+					|| (dx == 1 && dy == 0 && (ch & RIGHT_WALL) != 0)
+					|| (dx == 0 && dy == -1 && (ch & TOP_WALL) != 0)
+					|| (dx == 0 && dy == 1 && (ch & BOTTOM_WALL) != 0))
 			{
-				pacman_dx = 0;
-				pacman_dy = 0;
+				dx = 0;
+				dy = 0;
 			}
 		}
-		pacman_x = pacman_x + PACMAN_SPEED * pacman_dx;
-		pacman_y = pacman_y + PACMAN_SPEED * pacman_dy;
+		x = x + PACMAN_SPEED * dx;
+		y = y + PACMAN_SPEED * dy;
 
 	}
 
-	@Override
-	public boolean contains(int r, int c) {
-		// TODO Auto-generated method stub
-		return false;
+	public int getX() {
+		return x;
 	}
+	
+	public int getY() {
+		return y;
+	}
+	
+	public void updateReq(int req_dx, int req_dy) {
+		this.req_dx = req_dx;
+		this.req_dy = req_dy;
+	}
+	
+	
 
 }
