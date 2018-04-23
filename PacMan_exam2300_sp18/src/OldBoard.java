@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 @SuppressWarnings("serial")
-public class Board extends JPanel
+public class OldBoard extends JPanel
 {
     //declares the variables to be used for the screen size
 	private final static int N_BLOCKS = 15;
@@ -99,7 +99,7 @@ public class Board extends JPanel
     private final static int YUMMY_BITS_PRESENT = 48;
     
     //calls all of the necessary methods for instantiating a Board
-    public Board()
+    public OldBoard()
     {
         setMinimumSize (new Dimension (SCREEN_SIZE + BORDER_SIZE, SCREEN_SIZE + BORDER_SIZE));
         setPreferredSize (new Dimension (SCREEN_SIZE + BORDER_SIZE, SCREEN_SIZE + BORDER_SIZE));
