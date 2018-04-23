@@ -17,6 +17,7 @@ public class GhostShape implements MoveableShape
 
 	private int speed = 3;
 	private int maxLevel;
+	private boolean scared;
 
 	private short screenData[][];
 	private int type= 0;
@@ -143,22 +144,33 @@ public class GhostShape implements MoveableShape
 	//defines the ghost graphics properties
 	public void draw (Graphics2D g2)
 	{
-		if (type ==1) {
-			Ellipse2D.Double head = new Ellipse2D.Double (x, y, 0.9*width, 0.9*width);
-			Rectangle2D.Double body = new Rectangle2D.Double (x, y+width/3, 0.9*width, 2*width/3);
-			g2.setColor(Color.MAGENTA);
-			g2.fill(head);
-			g2.fill(body);
+		if (scared) {
+			g2.drawImage(new ImageIcon("pacpix/GhostScared1.gif").getImage(), x, y, null);
 		}
-		else if (type ==2) {
-			g2.drawImage(new ImageIcon("pacpix/Ghost4.png").getImage(), x, y, null);
-		}
-		else if (type==3) {
-			g2.drawImage(new ImageIcon("pacpix/Ghost3.png").getImage(), x, y, null);
-		}
-		else if (type==4) {
-			g2.drawImage(new ImageIcon("pacpix/Ghost1.gif").getImage(), x, y, null);
+		else {
+			if (type ==1) {
+				Ellipse2D.Double head = new Ellipse2D.Double (x, y, 0.9*width, 0.9*width);
+				Rectangle2D.Double body = new Rectangle2D.Double (x, y+width/3, 0.9*width, 2*width/3);
+				g2.setColor(Color.MAGENTA);
+				g2.fill(head);
+				g2.fill(body);
+			}
+			else if (type ==2) {
+				g2.drawImage(new ImageIcon("pacpix/Ghost4.png").getImage(), x, y, null);
+			}
+			else if (type==3) {
+				g2.drawImage(new ImageIcon("pacpix/Ghost3.png").getImage(), x, y, null);
+			}
+			else if (type==4) {
+				g2.drawImage(new ImageIcon("pacpix/Ghost1.gif").getImage(), x, y, null);
+			}
 		}
 		
+		
 	}
+	
+	public void setScared(boolean scared) {
+		this.scared = scared;
+	}
+
 }

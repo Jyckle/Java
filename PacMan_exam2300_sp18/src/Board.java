@@ -42,22 +42,26 @@ public class Board extends JPanel
     //contains all the data for the level
     private final short levelData[][] =
 	    	{
-//	    		{ 19, 26, 26, 26, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 22 },
-//	    		{ 21, 0, 0, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20 },
-//	    		{ 21, 0, 0, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20 },
-//	    		{ 21, 0, 0, 0, 17, 16, 16, 24, 16, 16, 16, 16, 16, 16, 20 },
-//	    		{ 17, 18, 18, 18, 16, 16, 20, 0, 17, 16, 16, 16, 16, 16, 20 },
-//	    		{ 17, 16, 16, 16, 16, 16, 20, 0, 17, 16, 16, 16, 16, 24, 20 },
-//	    		{ 25, 16, 16, 16, 24, 24, 28, 0, 25, 24, 24, 16, 20, 0, 21 },
-//	    		{ 1, 17, 16, 20, 0, 0, 0, 0, 0, 0, 0, 17, 20, 0, 21 },
-//	    		{ 1, 17, 16, 16, 18, 18, 22, 0, 19, 18, 18, 16, 20, 0, 21 },
-//	    		{ 1, 17, 16, 16, 16, 16, 20, 0, 17, 16, 16, 16, 20, 0, 21 },
-//	    		{ 1, 17, 16, 16, 16, 16, 20, 0, 17, 16, 16, 16, 20, 0, 21 },
-//	    		{ 1, 17, 16, 16, 16, 16, 16, 18, 16, 16, 16, 16, 20, 0, 21 },
-//	    		{ 1, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20, 0, 21 },
-//	    		{ 1, 25, 24, 24, 24, 24, 24, 24, 24, 24, 16, 16, 16, 18, 20 },
-//	    		{ 9, 8, 8, 8, 8, 8, 8, 8, 8, 8, 25, 24, 24, 24, 28 }
-	    			
+	    		{ 19, 26, 26, 26, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 22 },
+	    		{ 21, 0, 0, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20 },
+	    		{ 21, 0, 0, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20 },
+	    		{ 21, 0, 0, 0, 17, 16, 16, 24, 16, 16, 16, 16, 16, 16, 20 },
+	    		{ 17, 18, 18, 18, 16, 16, 20, 0, 17, 16, 16, 16, 16, 16, 20 },
+	    		{ 17, 16, 16, 16, 16, 16, 20, 0, 17, 16, 16, 16, 16, 24, 20 },
+	    		{ 25, 16, 16, 16, 24, 24, 28, 0, 25, 24, 24, 16, 20, 0, 21 },
+	    		{ 1, 17, 16, 20, 0, 0, 0, 0, 0, 0, 0, 17, 20, 0, 21 },
+	    		{ 1, 17, 16, 16, 18, 18, 22, 0, 19, 18, 18, 16, 20, 0, 21 },
+	    		{ 1, 17, 32, 16, 16, 16, 20, 0, 17, 16, 16, 16, 20, 0, 21 },
+	    		{ 1, 17, 16, 16, 16, 16, 20, 0, 17, 16, 16, 16, 20, 0, 21 },
+	    		{ 1, 17, 16, 16, 16, 16, 16, 18, 16, 16, 16, 16, 20, 0, 21 },
+	    		{ 1, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20, 0, 21 },
+	    		{ 1, 25, 24, 24, 24, 24, 24, 24, 24, 24, 16, 16, 16, 18, 20 },
+	    		{ 9, 8, 8, 8, 8, 8, 8, 8, 8, 8, 25, 24, 24, 24, 28 }
+
+	    	};
+    private final short level2Data[][] =
+    	{
+    			
 	    		{ 19, 19, 26, 18, 18, 26, 18, 26, 26, 26, 26, 26, 18, 18, 23 },
 	    		{ 21, 21, 0 , 17, 20, 0 , 21, 0 , 0 , 0 , 0 , 0 , 17, 20, 21 },
 	    		{ 21, 21, 0 , 17, 20, 0 , 17, 18, 22, 0 , 19, 18, 16, 20, 21 },
@@ -82,7 +86,12 @@ public class Board extends JPanel
     private final static int TOP_WALL = 2;
     private final static int BOTTOM_WALL = 8;
     private final static int REMOVE_YUMMY_BIT = 15;
+    private final static int POWER_BIT = 32;
     private final static int YUMMY_BITS_PRESENT = 48;
+    
+    
+    //when power bit is eaten, scared becomes true
+    private boolean scared = false;
     
     //calls all of the necessary methods for instantiating a Board
     public Board()
@@ -131,9 +140,17 @@ public class Board extends JPanel
     //transfers level data to the screen, continues with the level
     private void initLevel()
     {
-        for (int r = 0; r < N_BLOCKS; r++)
-            for (int c = 0; c < N_BLOCKS; c++)
-            	screenData[r][c] = levelData[r][c];
+        if (currLevel > 1) {
+        	for (int r = 0; r < N_BLOCKS; r++)
+                for (int c = 0; c < N_BLOCKS; c++)
+                	screenData[r][c] = level2Data[r][c];
+        }
+        else {
+        	for (int r = 0; r < N_BLOCKS; r++)
+                for (int c = 0; c < N_BLOCKS; c++)
+                	screenData[r][c] = levelData[r][c];
+        }
+    	
 
         continueLevel();
     }
@@ -192,6 +209,11 @@ public class Board extends JPanel
         	screenData[pacman.getY()/BLOCK_SIZE][pacman.getX()/BLOCK_SIZE] = (short) (ch & REMOVE_YUMMY_BIT);
             score++;
         }
+    	else if ((ch & POWER_BIT) != 0) {
+    		screenData[pacman.getY()/BLOCK_SIZE][pacman.getX()/BLOCK_SIZE] = (short) (ch & REMOVE_YUMMY_BIT);
+            score++;
+            scared=true;
+    	}
     	
     	String s = "Score: " + score;
         Font smallFont = new Font ("Helvetica", Font.BOLD, 14);
@@ -245,12 +267,23 @@ public class Board extends JPanel
     {
         for (int i = 0; i < numGhosts; i++)
         {
+        	ghost.get(i).setScared(scared);
+        	
         	ghost.get(i).move();
 
-            ghost.get(i).draw (g2d);
+        	ghost.get(i).draw (g2d);
             
             if (ghost.get(i).contains (pacman.getX(), pacman.getY()))
-                dying = true;
+            {
+                if (!scared)
+                	dying = true;
+                else {
+                	score += 50;
+            		ghost.remove(i);
+            		numGhosts--;
+                }
+                	
+            }
         }
     }
     
@@ -303,6 +336,11 @@ public class Board extends JPanel
                 { 
                     g2d.setColor (dotColor);
                     g2d.fillRect (c + 11, r + 11, 2, 2);
+                }
+                if ((screenData[gr][gc] & POWER_BIT) != 0)
+                {
+                	 g2d.setColor (dotColor);
+                     g2d.fillRect (c + 11, r + 11, 5, 5);
                 }
             }
         }
