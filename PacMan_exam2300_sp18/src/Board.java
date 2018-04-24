@@ -4,7 +4,9 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
 
@@ -42,7 +44,7 @@ public class Board extends JPanel
     //contains all the data for the level
     private final short levelData[][] =
 	    	{
-	    		{ 19, 26, 26, 26, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 22 },
+	    		{ 35, 26, 26, 26, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 38 },
 	    		{ 21, 0, 0, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20 },
 	    		{ 21, 0, 0, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20 },
 	    		{ 21, 0, 0, 0, 17, 16, 16, 24, 16, 16, 16, 16, 16, 16, 20 },
@@ -51,29 +53,29 @@ public class Board extends JPanel
 	    		{ 25, 16, 16, 16, 24, 24, 28, 0, 25, 24, 24, 16, 20, 0, 21 },
 	    		{ 1, 17, 16, 20, 0, 0, 0, 0, 0, 0, 0, 17, 20, 0, 21 },
 	    		{ 1, 17, 16, 16, 18, 18, 22, 0, 19, 18, 18, 16, 20, 0, 21 },
-	    		{ 1, 17, 32, 16, 16, 16, 20, 0, 17, 16, 16, 16, 20, 0, 21 },
+	    		{ 1, 17, 16, 16, 16, 16, 20, 0, 17, 16, 16, 16, 20, 0, 21 },
 	    		{ 1, 17, 16, 16, 16, 16, 20, 0, 17, 16, 16, 16, 20, 0, 21 },
 	    		{ 1, 17, 16, 16, 16, 16, 16, 18, 16, 16, 16, 16, 20, 0, 21 },
 	    		{ 1, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20, 0, 21 },
-	    		{ 1, 25, 24, 24, 24, 24, 24, 24, 24, 24, 16, 16, 16, 18, 20 },
-	    		{ 9, 8, 8, 8, 8, 8, 8, 8, 8, 8, 25, 24, 24, 24, 28 }
+	    		{ 1, 41, 24, 24, 24, 24, 24, 24, 24, 24, 16, 16, 16, 18, 20 },
+	    		{ 9, 8, 8, 8, 8, 8, 8, 8, 8, 8, 25, 24, 24, 24, 44 }
 
 	    	};
     private final short level2Data[][] =
     	{
     			
-	    		{ 19, 19, 26, 18, 18, 26, 18, 26, 26, 26, 26, 26, 18, 18, 23 },
+	    		{ 35, 19, 26, 18, 18, 26, 18, 26, 26, 26, 26, 26, 18, 18, 39 },
 	    		{ 21, 21, 0 , 17, 20, 0 , 21, 0 , 0 , 0 , 0 , 0 , 17, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 17, 18, 22, 0 , 19, 18, 16, 20, 21 },
+	    		{ 21, 21, 0 , 17, 20, 0 , 17, 18, 22, 0 , 35, 18, 16, 20, 21 },
 	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
 	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 25, 28, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 41, 28, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
 	    		{ 21, 21, 0 , 0 , 0 , 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 19, 22, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 19, 38, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
 	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
 	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
 	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 17, 24, 28, 0 , 25, 24, 16, 20, 21 },
+	    		{ 21, 21, 0 , 17, 20, 0 , 17, 24, 44, 0 , 25, 24, 16, 20, 21 },
 	    		{ 21, 21, 0 , 17, 20, 0 , 21, 0 , 0 , 0 , 0 , 0 , 17 , 20, 21 },
 	    		{ 21, 25, 26, 24, 24, 26, 24, 26, 26, 26, 26, 26, 24, 28, 21 },
 	    		{ 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 28 }
@@ -92,6 +94,11 @@ public class Board extends JPanel
     
     //when power bit is eaten, scared becomes true
     private boolean scared = false;
+    private final static int POWER_TIME = 5;
+    private int scaredTimers = 0;
+
+    
+      
     
     //calls all of the necessary methods for instantiating a Board
     public Board()
@@ -204,16 +211,16 @@ public class Board extends JPanel
     private void drawScore (Graphics2D g)
     {
     	short ch = screenData[pacman.getY()/BLOCK_SIZE][pacman.getX()/BLOCK_SIZE];
-    	if (( ch & YUMMY_BIT) != 0)
+    	if ((ch & POWER_BIT) != 0) {
+    		screenData[pacman.getY()/BLOCK_SIZE][pacman.getX()/BLOCK_SIZE] = (short) (ch & REMOVE_YUMMY_BIT);
+            score++;
+            scared();
+    	}
+    	else if (( ch & YUMMY_BIT) != 0)
         {
         	screenData[pacman.getY()/BLOCK_SIZE][pacman.getX()/BLOCK_SIZE] = (short) (ch & REMOVE_YUMMY_BIT);
             score++;
         }
-    	else if ((ch & POWER_BIT) != 0) {
-    		screenData[pacman.getY()/BLOCK_SIZE][pacman.getX()/BLOCK_SIZE] = (short) (ch & REMOVE_YUMMY_BIT);
-            score++;
-            scared=true;
-    	}
     	
     	String s = "Score: " + score;
         Font smallFont = new Font ("Helvetica", Font.BOLD, 14);
@@ -223,6 +230,28 @@ public class Board extends JPanel
 
         for (int i = 0; i < pacsLeft; i++)
             g.drawImage (new ImageIcon("pacpix/PacMan3left.gif").getImage(), i * 28 + 8, SCREEN_SIZE + 1, this);
+    }
+    
+    //timer for power bit
+    public void scared()
+    {
+    	scared=true;
+    	scaredTimers++;
+    	new java.util.Timer().schedule( 
+    	        new java.util.TimerTask() {
+    	            public void run() {
+    	                if(scaredTimers>1) {
+    	                	cancel();
+    	                	scaredTimers--;
+    	                }	
+    	                else {
+    	                	scared=false;
+    	                	scaredTimers--;
+    	                }
+    	                    
+    	            }
+    	        }, 
+    	        POWER_TIME*1000);      
     }
     
     // check if all collectibles are gone
@@ -280,7 +309,7 @@ public class Board extends JPanel
                 else {
                 	score += 50;
             		ghost.remove(i);
-            		numGhosts--;
+            		ghost.add (new GhostShape (screenData, currLevel, 4, 4, BLOCK_SIZE));
                 }
                 	
             }
@@ -339,8 +368,8 @@ public class Board extends JPanel
                 }
                 if ((screenData[gr][gc] & POWER_BIT) != 0)
                 {
-                	 g2d.setColor (dotColor);
-                     g2d.fillRect (c + 11, r + 11, 5, 5);
+                	 g2d.setColor (Color.GREEN);
+                	 g2d.fill(new Ellipse2D.Double(c+6,r+6,10,10));
                 }
             }
         }
