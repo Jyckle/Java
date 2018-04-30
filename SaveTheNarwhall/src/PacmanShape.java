@@ -135,6 +135,12 @@ public class PacmanShape {
 				dx = 0;
 				dy = 0;
 			}
+			
+			if (req_dx == 0 && req_dy == 0)
+			{
+				dx=0;
+				dy=0;
+			}
 		}
 		x = x + PACMAN_SPEED * dx;
 		y = y + PACMAN_SPEED * dy;

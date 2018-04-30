@@ -28,7 +28,7 @@ public class Board extends JPanel
     private boolean dying = false;
     
     //to keep track of level and number of ghosts
-    private int currLevel = 1;
+    private int currLevel = 0;
     private int numGhosts = 5;
     private int pacsLeft, score;
     
@@ -46,8 +46,8 @@ public class Board extends JPanel
 	    	{
 	    		{ 35, 26, 26, 26, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 38 },
 	    		{ 21, 0, 0, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20 },
-	    		{ 21, 0, 0, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20 },
-	    		{ 21, 0, 0, 0, 17, 16, 16, 24, 16, 16, 16, 16, 16, 16, 20 },
+	    		{ 21, 0, 0, 0, 17, 16, 16, 16, 16, 16, 16, 16, 128, 16, 20 },
+	    		{ 21, 0, 0, 0, 17, 16, 16, 24, 16, 16, 16, 16, 64, 16, 20 },
 	    		{ 17, 18, 18, 18, 16, 16, 20, 0, 17, 16, 16, 16, 16, 16, 20 },
 	    		{ 17, 16, 16, 16, 16, 16, 20, 0, 17, 16, 16, 16, 16, 24, 20 },
 	    		{ 25, 16, 16, 16, 24, 24, 28, 0, 25, 24, 24, 16, 20, 0, 21 },
@@ -61,6 +61,26 @@ public class Board extends JPanel
 	    		{ 9, 8, 8, 8, 8, 8, 8, 8, 8, 8, 25, 24, 24, 24, 44 }
 
 	    	};
+    private final short level1Data[][] =
+    	{
+    			
+	    		{ 35, 19, 26, 18, 18, 26, 18, 26, 26, 26, 26, 26, 18, 18, 39 },
+	    		{ 21, 21, 0 , 17, 20, 0 , 21, 0 , 0 , 0 , 0 , 0 , 17, 20, 21 },
+	    		{ 21, 21, 0 , 17, 20, 0 , 17, 18, 22, 0 , 35, 18, 16, 20, 21 },
+	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 41, 28, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 0 , 0 , 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 147, 38, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 17, 20, 0 , 17, 24, 44, 0 , 89, 24, 16, 20, 21 },
+	    		{ 21, 21, 0 , 17, 20, 0 , 21, 0 , 0 , 0 , 0 , 0 , 17 , 20, 21 },
+	    		{ 21, 25, 26, 24, 24, 26, 24, 26, 26, 26, 26, 26, 24, 28, 21 },
+	    		{ 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 28 }
+	    	};
+    
     private final short level2Data[][] =
     	{
     			
@@ -75,11 +95,13 @@ public class Board extends JPanel
 	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
 	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
 	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 17, 24, 44, 0 , 25, 24, 16, 20, 21 },
+	    		{ 21, 21, 0 , 17, 20, 0 , 17, 24, 108, 0 , 153, 24, 16, 20, 21 },
 	    		{ 21, 21, 0 , 17, 20, 0 , 21, 0 , 0 , 0 , 0 , 0 , 17 , 20, 21 },
 	    		{ 21, 25, 26, 24, 24, 26, 24, 26, 26, 26, 26, 26, 24, 28, 21 },
 	    		{ 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 28 }
 	    	};
+    
+    private final short[][][] levels= {levelData,level1Data,level2Data};
     
     //Symbolic constants for checking values
     private final static int YUMMY_BIT = 16;
@@ -87,6 +109,8 @@ public class Board extends JPanel
     private final static int RIGHT_WALL = 4;
     private final static int TOP_WALL = 2;
     private final static int BOTTOM_WALL = 8;
+    private final static int UP_STAIRS = 64;
+    private final static int DOWN_STAIRS = 128;
     private final static int REMOVE_YUMMY_BIT = 15;
     private final static int POWER_BIT = 32;
     private final static int YUMMY_BITS_PRESENT = 48;
@@ -139,7 +163,7 @@ public class Board extends JPanel
         pacsLeft = 3;
         score = 0;
         numGhosts = 5;
-        currLevel = 1;
+        currLevel = 0;
         
         initLevel();
     }
@@ -147,17 +171,20 @@ public class Board extends JPanel
     //transfers level data to the screen, continues with the level
     private void initLevel()
     {
-        if (currLevel > 1) {
-        	for (int r = 0; r < N_BLOCKS; r++)
-                for (int c = 0; c < N_BLOCKS; c++)
-                	screenData[r][c] = level2Data[r][c];
-        }
-        else {
-        	for (int r = 0; r < N_BLOCKS; r++)
-                for (int c = 0; c < N_BLOCKS; c++)
-                	screenData[r][c] = levelData[r][c];
-        }
+//        if (currLevel > 1) {
+//        	for (int r = 0; r < N_BLOCKS; r++)
+//                for (int c = 0; c < N_BLOCKS; c++)
+//                	screenData[r][c] = levels[1][r][c];
+//        }
+//        else {
+//        	for (int r = 0; r < N_BLOCKS; r++)
+//                for (int c = 0; c < N_BLOCKS; c++)
+//                	screenData[r][c] = levels[0][r][c];
+//        }
     	
+        for (int r = 0; r < N_BLOCKS; r++)
+            for (int c = 0; c < N_BLOCKS; c++)
+            	screenData[r][c] = levels[currLevel][r][c];
 
         continueLevel();
     }
@@ -263,8 +290,21 @@ public class Board extends JPanel
         	for (int c = 0; c < N_BLOCKS; c++)
         	{
                 if ((screenData[r][c] & YUMMY_BITS_PRESENT) != 0)
-                    finished = false;
+                    finished = false;             
             }
+        
+        short ch = screenData[pacman.getY()/BLOCK_SIZE][pacman.getX()/BLOCK_SIZE];
+    	if ((ch & UP_STAIRS) != 0) {
+    		if (currLevel <(levels.length-1))
+    			currLevel++;
+    		initLevel();
+    	}
+    	if ((ch & DOWN_STAIRS) != 0) {
+    		if (currLevel >0)
+    			currLevel--;
+    		initLevel();
+    	}
+    	
         		
         if (finished)
         {
@@ -348,7 +388,18 @@ public class Board extends JPanel
                 g2d.setStroke (new BasicStroke(2));
                 
                 g2d.drawImage (new ImageIcon("env_pics/rockFloor.jpeg").getImage(), c, r, 24, 24, this);
+                
+                if ((screenData[gr][gc] & UP_STAIRS) != 0) {
+//                	g2d.setColor (Color.GRAY);
+//                	g2d.fillRect (c, r, 24, 24);
+                	g2d.drawImage (new ImageIcon("env_pics/ladder.png").getImage(), c, r, 24, 24, this);
+                }
 
+                if ((screenData[gr][gc] & DOWN_STAIRS) != 0) {
+                	g2d.setColor (Color.BLACK);
+                	g2d.fill(new Ellipse2D.Double(c,r,24,24));
+                }
+                
                 if ((screenData[gr][gc] & LEFT_WALL) != 0)
                 	g2d.drawImage (new ImageIcon("env_pics/vbrick.jpg").getImage(), c, r, this);
                 	//g2d.drawLine (c, r, c, r + BLOCK_SIZE - 1);
@@ -444,14 +495,15 @@ public class Board extends JPanel
             	inGame = true;
             	initGame();
             }
+            
         }
 
         public void keyReleased (KeyEvent e)
         {
             int key = e.getKeyCode();
 
-            if (key == Event.LEFT || key == Event.RIGHT
-                    || key == Event.UP || key == Event.DOWN)
+            if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_RIGHT
+                    || key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN)
             {
             	pacman.updateReq(0, 0);
             }
