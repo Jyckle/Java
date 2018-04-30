@@ -346,22 +346,24 @@ public class Board extends JPanel
 
                 g2d.setColor (mazeColor);
                 g2d.setStroke (new BasicStroke(2));
+                
+                g2d.drawImage (new ImageIcon("env_pics/rockFloor.jpeg").getImage(), c, r, 24, 24, this);
 
                 if ((screenData[gr][gc] & LEFT_WALL) != 0)
-                	g2d.drawImage (new ImageIcon("env_pics/vertical_wall.jpg").getImage(), c, r+BLOCK_SIZE-1, this);
+                	g2d.drawImage (new ImageIcon("env_pics/vbrick.jpg").getImage(), c, r, this);
                 	//g2d.drawLine (c, r, c, r + BLOCK_SIZE - 1);
 
                 if ((screenData[gr][gc] & TOP_WALL) != 0)
-                	g2d.drawImage (new ImageIcon("env_pics/horizontal_wall.jpg").getImage(), c, r, this);
+                	g2d.drawImage (new ImageIcon("env_pics/hbrick.jpg").getImage(), c, r, this);
                 	//g2d.drawLine (c, r, c + BLOCK_SIZE - 1, r);
 
                 if ((screenData[gr][gc] & RIGHT_WALL) != 0)
-                	g2d.drawImage (new ImageIcon("env_pics/vertical_wall.jpg").getImage(), c+BLOCK_SIZE-1, r+BLOCK_SIZE-1, this);
+                	g2d.drawImage (new ImageIcon("env_pics/vbrick.jpg").getImage(), c+BLOCK_SIZE-3, r, this);
                 	//g2d.drawLine (c + BLOCK_SIZE - 1, r, c + BLOCK_SIZE - 1,
                       //      r + BLOCK_SIZE - 1);
 
                 if ((screenData[gr][gc] & BOTTOM_WALL) != 0)
-                	g2d.drawImage (new ImageIcon("env_pics/horizontal_wall.jpg").getImage(), c+BLOCK_SIZE-1, r, this);
+                	g2d.drawImage (new ImageIcon("env_pics/hbrick.jpg").getImage(), c, r+BLOCK_SIZE-3, this);
                 	//g2d.drawLine (c, r + BLOCK_SIZE - 1, c + BLOCK_SIZE - 1,
                       //      r + BLOCK_SIZE - 1);
 
@@ -387,7 +389,7 @@ public class Board extends JPanel
 
         Graphics2D g2d = (Graphics2D) g;
 
-        g2d.setColor (Color.black);
+        g2d.setColor (Color.BLACK);
         g2d.fillRect (0, 0, getWidth(), getHeight());
 
         drawMaze (g2d);
