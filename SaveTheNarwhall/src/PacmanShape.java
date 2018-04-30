@@ -33,6 +33,9 @@ public class PacmanShape {
   
     	};
     
+    private Image charImages[] = {new ImageIcon("char_pics/up.png").getImage(), new ImageIcon("char_pics/down.png").getImage(), 
+			new ImageIcon("char_pics/right.png").getImage(), new ImageIcon("char_pics/left.png").getImage()};
+    
     //positioning variables
     private int x, y, dx, dy;
     private int req_dx, req_dy, view_dx, view_dy;
@@ -66,13 +69,13 @@ public class PacmanShape {
 	public void draw(Graphics2D g2) {
         
 		if (view_dx == -1)
-            g2.drawImage(pacImages[2][spriteImgIdx], x + 1,y + 1, null);
+            g2.drawImage(charImages[3], x + 1,y + 1, null);
         else if (view_dx == 1)
-        	g2.drawImage(pacImages[3][spriteImgIdx], x + 1,y + 1, null);
+        	g2.drawImage(charImages[2], x + 1,y + 1, null);
         else if (view_dy == -1)
-        	g2.drawImage(pacImages[0][spriteImgIdx], x + 1,y + 1, null);
+        	g2.drawImage(charImages[0], x + 1,y + 1, null);
         else
-        	g2.drawImage(pacImages[1][spriteImgIdx], x + 1,y + 1, null);
+        	g2.drawImage(charImages[1], x + 1,y + 1, null);
 
 	}
 	
