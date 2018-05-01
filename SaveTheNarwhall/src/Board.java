@@ -35,7 +35,7 @@ public class Board extends JPanel
     //keeps track of the ghosts
     private ArrayList<MoveableShape> ghost;
     
-    private PacmanShape pacman;
+    private Character pacman;
     	    
     private Timer timer;
     
@@ -120,6 +120,14 @@ public class Board extends JPanel
     private boolean scared = false;
     private final static int POWER_TIME = 5;
     private int scaredTimers = 0;
+    
+    //integer to check for movement
+    private boolean moving[] = {false, false, false, false};
+    
+    //attacking
+    private int damage= 0;
+    private boolean attacking = false;
+    private Image attackImage = new ImageIcon("char_pics/fire.png").getImage();
 
     
       
@@ -164,6 +172,10 @@ public class Board extends JPanel
         score = 0;
         numGhosts = 5;
         currLevel = 0;
+        moving[0] = false;
+        moving[1] = false;
+        moving[2] = false;
+        moving[3] = false;
         
         initLevel();
     }
@@ -171,17 +183,6 @@ public class Board extends JPanel
     //transfers level data to the screen, continues with the level
     private void initLevel()
     {
-//        if (currLevel > 1) {
-//        	for (int r = 0; r < N_BLOCKS; r++)
-//                for (int c = 0; c < N_BLOCKS; c++)
-//                	screenData[r][c] = levels[1][r][c];
-//        }
-//        else {
-//        	for (int r = 0; r < N_BLOCKS; r++)
-//                for (int c = 0; c < N_BLOCKS; c++)
-//                	screenData[r][c] = levels[0][r][c];
-//        }
-    	
         for (int r = 0; r < N_BLOCKS; r++)
             for (int c = 0; c < N_BLOCKS; c++)
             	screenData[r][c] = levels[currLevel][r][c];
@@ -199,7 +200,7 @@ public class Board extends JPanel
 
         dying = false;
         
-        pacman = new PacmanShape(screenData, 7, 11, BLOCK_SIZE);
+        pacman = new Character(screenData, 7, 11, BLOCK_SIZE);
         
     }
     
@@ -249,14 +250,14 @@ public class Board extends JPanel
             score++;
         }
     	
-    	String s = "Score: " + score;
+    	String s = "Health: " + pacman.getHealth();
         Font smallFont = new Font ("Helvetica", Font.BOLD, 14);
         g.setFont (smallFont);
         g.setColor (new Color (96, 128, 255));
         g.drawString (s, SCREEN_SIZE / 2 + 96, SCREEN_SIZE + 16);
 
         for (int i = 0; i < pacsLeft; i++)
-            g.drawImage (new ImageIcon("char_pics/PacMan3left.gif").getImage(), i * 28 + 8, SCREEN_SIZE + 1, this);
+            g.drawImage (new ImageIcon("env_pics/heart.png").getImage(), i * 28 + 8, SCREEN_SIZE + 1, 22, 22, this);
     }
     
     //timer for power bit
@@ -303,9 +304,8 @@ public class Board extends JPanel
     		if (currLevel >0)
     			currLevel--;
     		initLevel();
-    	}
-    	
-        		
+    	}  	
+    		
         if (finished)
         {
             score += 50;
@@ -335,9 +335,7 @@ public class Board extends JPanel
     private void moveGhosts (Graphics2D g2d)
     {
         for (int i = 0; i < numGhosts; i++)
-        {
-        	ghost.get(i).setScared(scared);
-        	
+        {      	
         	ghost.get(i).move();
 
         	ghost.get(i).draw (g2d);
@@ -345,7 +343,14 @@ public class Board extends JPanel
             if (ghost.get(i).contains (pacman.getX(), pacman.getY()))
             {
                 if (!scared)
-                	dying = true;
+                {
+                	if (pacman.removeHealth(100))
+                		dying = true;
+                	else {
+                		ghost.remove(i);
+                		ghost.add (new GhostShape (screenData, currLevel, 4, 4, BLOCK_SIZE));
+                	}
+                }
                 else {
                 	score += 50;
             		ghost.remove(i);
@@ -374,7 +379,7 @@ public class Board extends JPanel
     {
         int r, c;
         Color dotColor = new Color (192, 192, 0);
-        Color mazeColor = new Color (5, 100, 5);
+        Color mazeColor = new Color (104, 104, 104);
 
         //walk through all blocks on the screen
         for (r = 0; r < SCREEN_SIZE; r += BLOCK_SIZE)
@@ -387,7 +392,8 @@ public class Board extends JPanel
                 g2d.setColor (mazeColor);
                 g2d.setStroke (new BasicStroke(2));
                 
-                g2d.drawImage (new ImageIcon("env_pics/rockFloor.jpeg").getImage(), c, r, 24, 24, this);
+                g2d.fillRect(c, r, getWidth(), getHeight());
+                //g2d.drawImage (new ImageIcon("env_pics/rockFloor.jpeg").getImage(), c, r, 24, 24, this);
                 
                 if ((screenData[gr][gc] & UP_STAIRS) != 0) {
 //                	g2d.setColor (Color.GRAY);
@@ -445,14 +451,47 @@ public class Board extends JPanel
 
         drawMaze (g2d);
         drawScore (g2d);
-        pacman.doAnim();
+        attack(g2d);
 
         if (inGame)
             playGame (g2d);
         else
             showIntroScreen (g2d);
+        
     }
     
+    public void attack(Graphics g2d) {
+    	damage = pacman.getDamage();
+    	int dir = pacman.getDirection();
+    	int dx =0;
+    	int dy =0;
+    	switch (dir) {
+    	case 0: 
+    		dy = -1; 
+    		dx=0;
+    		break;
+    	case 1: 
+    		dy = 1; 
+    		dx=0;
+    		break;
+    	case 2: 
+    		dx = 1; 
+    		dy=0;
+    		break;
+    	case 3: 
+    		dx = -1;
+    		dy=0;
+    		break;
+    	//default: dx=0; dy=0;
+    	}
+    	//Graphics2D g2d = new Graphics2D();
+    	if ((dy !=0 || dx!=0) && attacking) {
+    		g2d.drawImage (attackImage, pacman.getX() + BLOCK_SIZE*dx, 
+    				pacman.getY() + BLOCK_SIZE*dy, 22, 22, this);
+    	}
+    	
+    }	
+        
     //take input from various keyEvents
     protected class PacKeyAdapter extends KeyAdapter
     {
@@ -465,18 +504,22 @@ public class Board extends JPanel
                 if (key == KeyEvent.VK_LEFT)
                 {
                     pacman.updateReq(-1, 0);
+                    moving[0]= true;
                 }
                 else if (key == KeyEvent.VK_RIGHT)
                 {
                     pacman.updateReq(1, 0);
+                    moving[1]= true;
                 }
                 else if (key == KeyEvent.VK_UP)
                 {
                     pacman.updateReq(0, -1);
+                    moving[2]= true;
                 }
                 else if (key == KeyEvent.VK_DOWN)
                 {
                 	pacman.updateReq(0, 1);
+                	moving[3]= true;
                 }
                 else if (key == KeyEvent.VK_ESCAPE && timer.isRunning())
                 {
@@ -488,6 +531,11 @@ public class Board extends JPanel
                         timer.stop();
                     else
                         timer.start();
+                }
+                
+                if (key == KeyEvent.VK_SPACE)
+                {
+                	 attacking=true;
                 }
             }
             else if (key == 's' || key == 'S')
@@ -502,11 +550,17 @@ public class Board extends JPanel
         {
             int key = e.getKeyCode();
 
-            if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_RIGHT
-                    || key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN)
-            {
-            	pacman.updateReq(0, 0);
+            switch (key) {
+            	case KeyEvent.VK_LEFT: moving[0]= false;
+            	case KeyEvent.VK_RIGHT: moving[1]= false;
+            	case KeyEvent.VK_UP: moving[2]= false;
+            	case KeyEvent.VK_DOWN: moving[3] = false;
+            	case KeyEvent.VK_SPACE: attacking = false;
             }
+            
+           if (!moving[0] && !moving[1] && !moving[2] && !moving[3]) {
+        	   pacman.updateReq(0, 0);
+           }
         }
     }
 }
