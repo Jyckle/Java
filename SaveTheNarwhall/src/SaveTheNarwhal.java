@@ -16,9 +16,12 @@ public class SaveTheNarwhal extends JFrame {
 	//Adds the board to the frame, sets the title and default close operation, and sets the location to the center of the screen
     private void initUI() {
         
-        add (new Board());
+    	DungeonGenerator d = new DungeonGenerator(5,30,24);
+		int levels[][][]= d.getLevels();
+    	
+        add (new Board(levels));
         
-        setTitle ("PacMan");
+        setTitle ("SaveTheNarwhall");
         setDefaultCloseOperation (EXIT_ON_CLOSE);
         pack();
         setLocationRelativeTo (null);

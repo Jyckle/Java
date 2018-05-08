@@ -18,7 +18,7 @@ public class GhostShape implements MoveableShape
 	private int speed = 3;
 	private int maxLevel;
 
-	private short screenData[][];
+	private int screenData[][];
 	
 	private final static int LEFT_WALL = 1;
     private final static int RIGHT_WALL = 4;
@@ -26,7 +26,7 @@ public class GhostShape implements MoveableShape
     private final static int BOTTOM_WALL = 8;
 
 	//Class constructor
-	public GhostShape (short screenData[][], int level, int brd_x, int brd_y,
+	public GhostShape (int screenData[][], int level, int brd_x, int brd_y,
 			int width)
 	{
 		//holds all potential speeds that can be used

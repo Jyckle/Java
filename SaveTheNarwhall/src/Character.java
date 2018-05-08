@@ -18,7 +18,7 @@ public class Character {
     private int req_dx, req_dy, view_dx, view_dy;
     private int block_size;
     
-	private short screenData[][];
+	private int screenData[][];
 
 	private final static int LEFT_WALL = 1;
 	private final static int RIGHT_WALL = 4;
@@ -31,7 +31,7 @@ public class Character {
 	private int attackPower=6;
 	
 
-	public Character (short screenData[][], int brd_x, int brd_y,
+	public Character (int screenData[][], int brd_x, int brd_y,
 			int block_size)
 	{
 		
@@ -75,7 +75,7 @@ public class Character {
 	
 	public void move() {
 		int px, py;
-		short ch;
+		int ch;
 
 		// if the change in distance is okay, set it
 		if (req_dx == -dx && req_dy == -dy)

@@ -14,7 +14,7 @@ import javax.swing.*;
 public class Board extends JPanel
 {
     //declares the variables to be used for the screen size
-	private final static int N_BLOCKS = 15;
+	private final static int N_BLOCKS = 30;
     private final static int BLOCK_SIZE = 24;
     private final static int SCREEN_SIZE = N_BLOCKS * BLOCK_SIZE;
     private final static int BORDER_SIZE = 25;
@@ -39,10 +39,10 @@ public class Board extends JPanel
     	    
     private Timer timer;
     
-    private short[][] screenData;
+    private int[][] screenData;
     
     //contains all the data for the level
-    private final short levelData[][] =
+    private final int levelData[][] =
 	    	{
 	    		{ 35, 26, 26, 26, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 38 },
 	    		{ 21, 0, 0, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20 },
@@ -61,27 +61,27 @@ public class Board extends JPanel
 	    		{ 9, 8, 8, 8, 8, 8, 8, 8, 8, 8, 25, 24, 24, 24, 44 }
 
 	    	};
-    private final short level1Data[][] =
+    private final int level1Data[][] =
     	{
     			
 	    		{ 35, 19, 26, 18, 18, 26, 18, 26, 26, 26, 26, 26, 18, 18, 39 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 21, 0 , 0 , 0 , 0 , 0 , 17, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 17, 18, 22, 0 , 35, 18, 16, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 41, 28, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 0 , 0 , 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 147, 38, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 17, 24, 44, 0 , 89, 24, 16, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 21, 0 , 0 , 0 , 0 , 0 , 17 , 20, 21 },
+	    		{ 21, 21, 0 , 21, 0 , 21, 21, 0 , 0 , 0 , 0 , 0 , 17, 20, 21 },
+	    		{ 21, 21, 0 , 21, 0 , 21, 17, 18, 22, 0 , 35, 18, 16, 20, 21 },
+	    		{ 21, 21, 0 , 21, 0 , 21, 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 21, 0 , 21, 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 21, 0 , 21, 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 21, 0 , 21, 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 21, 0 , 21, 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 21, 0 , 21, 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 21, 0 , 21, 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 21, 0 , 21, 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
+	    		{ 21, 21, 0 , 21, 0 , 21, 17, 24, 44, 0 , 89, 24, 16, 20, 21 },
+	    		{ 21, 21, 0 , 21, 0 , 21, 21, 0 , 0 , 0 , 0 , 0 , 17 , 20, 21 },
 	    		{ 21, 25, 26, 24, 24, 26, 24, 26, 26, 26, 26, 26, 24, 28, 21 },
 	    		{ 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 28 }
 	    	};
     
-    private final short level2Data[][] =
+    private final int level2Data[][] =
     	{
     			
 	    		{ 35, 19, 26, 18, 18, 26, 18, 26, 26, 26, 26, 26, 18, 18, 39 },
@@ -101,19 +101,22 @@ public class Board extends JPanel
 	    		{ 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 28 }
 	    	};
     
-    private final short[][][] levels= {levelData,level1Data,level2Data};
+    private int[][][] levels= {levelData,level1Data,level2Data};
     
     //Symbolic constants for checking values
-    private final static int YUMMY_BIT = 16;
-    private final static int LEFT_WALL = 1;
-    private final static int RIGHT_WALL = 4;
-    private final static int TOP_WALL = 2;
-    private final static int BOTTOM_WALL = 8;
-    private final static int UP_STAIRS = 64;
-    private final static int DOWN_STAIRS = 128;
-    private final static int REMOVE_YUMMY_BIT = 15;
-    private final static int POWER_BIT = 32;
-    private final static int YUMMY_BITS_PRESENT = 48;
+    public final static int YUMMY_BIT = 16;
+    public final static int LEFT_WALL = 1;
+    public final static int RIGHT_WALL = 4;
+    public final static int TOP_WALL = 2;
+    public final static int BOTTOM_WALL = 8;
+    public final static int UP_STAIRS = 64;
+    public final static int DOWN_STAIRS = 128;
+    public final static int POWER_BIT = 32;
+    public final static int YUMMY_BITS_PRESENT = 48;
+    public final static int HIDDEN = 256;
+    public final static int CLEAR_ALL = 2147483647;
+    public final static int REMOVE_YUMMY_BIT = CLEAR_ALL-YUMMY_BIT;
+    public final static int UNHIDE = CLEAR_ALL-HIDDEN;
     
     
     //when power bit is eaten, scared becomes true
@@ -133,10 +136,12 @@ public class Board extends JPanel
       
     
     //calls all of the necessary methods for instantiating a Board
-    public Board()
+    public Board(int[][][] levels)
     {
-        setMinimumSize (new Dimension (SCREEN_SIZE + BORDER_SIZE, SCREEN_SIZE + BORDER_SIZE));
-        setPreferredSize (new Dimension (SCREEN_SIZE + BORDER_SIZE, SCREEN_SIZE + BORDER_SIZE));
+        this.levels= levels;
+        
+    	setMinimumSize (new Dimension (SCREEN_SIZE, SCREEN_SIZE + BORDER_SIZE));
+        setPreferredSize (new Dimension (SCREEN_SIZE, SCREEN_SIZE + BORDER_SIZE));
 
         initVariables();
         initBoard();
@@ -155,7 +160,7 @@ public class Board extends JPanel
     //sets up the necessary variables
     private void initVariables()
     {
-        screenData = new short[N_BLOCKS][N_BLOCKS];
+        screenData = new int[N_BLOCKS][N_BLOCKS];
         
         timer = new Timer (40, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -238,15 +243,15 @@ public class Board extends JPanel
     //draws the score in the bottom right corner of the frame
     private void drawScore (Graphics2D g)
     {
-    	short ch = screenData[pacman.getY()/BLOCK_SIZE][pacman.getX()/BLOCK_SIZE];
+    	int ch = screenData[pacman.getY()/BLOCK_SIZE][pacman.getX()/BLOCK_SIZE];
     	if ((ch & POWER_BIT) != 0) {
-    		screenData[pacman.getY()/BLOCK_SIZE][pacman.getX()/BLOCK_SIZE] = (short) (ch & REMOVE_YUMMY_BIT);
+    		screenData[pacman.getY()/BLOCK_SIZE][pacman.getX()/BLOCK_SIZE] = (int) (ch & REMOVE_YUMMY_BIT);
             score++;
             scared();
     	}
     	else if (( ch & YUMMY_BIT) != 0)
         {
-        	screenData[pacman.getY()/BLOCK_SIZE][pacman.getX()/BLOCK_SIZE] = (short) (ch & REMOVE_YUMMY_BIT);
+        	screenData[pacman.getY()/BLOCK_SIZE][pacman.getX()/BLOCK_SIZE] = (int) (ch & REMOVE_YUMMY_BIT);
             score++;
         }
     	
@@ -294,7 +299,9 @@ public class Board extends JPanel
                     finished = false;             
             }
         
-        short ch = screenData[pacman.getY()/BLOCK_SIZE][pacman.getX()/BLOCK_SIZE];
+        int px = pacman.getX()/BLOCK_SIZE;
+        int py = pacman.getY()/BLOCK_SIZE;
+        int ch = screenData[py][px];
     	if ((ch & UP_STAIRS) != 0) {
     		if (currLevel <(levels.length-1))
     			currLevel++;
@@ -304,7 +311,37 @@ public class Board extends JPanel
     		if (currLevel >0)
     			currLevel--;
     		initLevel();
-    	}  	
+    	}
+    	for (int x =-1; x<=1; x++) {
+			for (int y =-1; y<=1; y++) {
+				if((px +x)>= 0 && (px+x)<N_BLOCKS && (py +y)>= 0 && (py+y)<N_BLOCKS) {
+					if ((screenData[py+y][px+x] & HIDDEN) !=0) {
+						screenData[py+y][px+x]= screenData[py+y][px+x] & UNHIDE;
+					}
+						
+				}
+			}
+		}
+    		
+    			
+    				
+    		
+    		
+//    		if (py > 0 && py < N_BLOCKS && px >= 0 && px < N_BLOCKS) {
+//    			
+//    		}
+//    		screenData[py][px]= screenData[py][px] & UNHIDE;
+//    		screenData[py+1][px]= screenData[py+1][px] & UNHIDE;
+//    		screenData[py-1][px]= screenData[py-1][px] & UNHIDE;
+//    		screenData[py][px+1]= screenData[py][px+1] & UNHIDE;
+//    		screenData[py][px-1]= screenData[py][px-1] & UNHIDE;
+//    		screenData[py+1][px+1]= screenData[py+1][px+1] & UNHIDE;
+//    		screenData[py+1][px-1]= screenData[py+1][px-1] & UNHIDE;
+//    		screenData[py-1][px+1]= screenData[py-1][px+1] & UNHIDE;
+//    		screenData[py-1][px-1]= screenData[py-1][px-1] & UNHIDE;
+    	
+    	
+    	
     		
         if (finished)
         {
@@ -434,6 +471,12 @@ public class Board extends JPanel
                 	 g2d.setColor (Color.GREEN);
                 	 g2d.fill(new Ellipse2D.Double(c+6,r+6,10,10));
                 }
+                
+                if ((screenData[gr][gc] & HIDDEN) != 0)
+                {
+                	g2d.setColor(Color.BLACK);
+                	g2d.fillRect(c, r, BLOCK_SIZE,BLOCK_SIZE );
+                }
             }
         }
     }
@@ -484,11 +527,21 @@ public class Board extends JPanel
     		break;
     	//default: dx=0; dy=0;
     	}
-    	//Graphics2D g2d = new Graphics2D();
     	if ((dy !=0 || dx!=0) && attacking) {
     		g2d.drawImage (attackImage, pacman.getX() + BLOCK_SIZE*dx, 
     				pacman.getY() + BLOCK_SIZE*dy, 22, 22, this);
+    		
+    		for (int i = 0; i < numGhosts; i++)
+            {      	          
+                if (ghost.get(i).contains (pacman.getX() + BLOCK_SIZE*dx, pacman.getY() + BLOCK_SIZE*dy))
+                {
+                    ghost.remove(i);
+                    ghost.add (new GhostShape (screenData, currLevel, 4, 4, BLOCK_SIZE));
+                }   
+            }
     	}
+    	
+    	
     	
     }	
         
