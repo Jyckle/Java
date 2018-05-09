@@ -458,11 +458,11 @@ public class Board extends JPanel
                 	 g2d.fill(new Ellipse2D.Double(c+6,r+6,10,10));
                 }
                 //comment out this block to reveal entire map
-                if ((screenData[gr][gc] & HIDDEN) != 0)
-                {
-                	g2d.setColor(Color.BLACK);
-                	g2d.fillRect(c, r, BLOCK_SIZE,BLOCK_SIZE );
-                }
+//                if ((screenData[gr][gc] & HIDDEN) != 0)
+//                {
+//                	g2d.setColor(Color.BLACK);
+//                	g2d.fillRect(c, r, BLOCK_SIZE,BLOCK_SIZE );
+//                }
             }
         }
     }

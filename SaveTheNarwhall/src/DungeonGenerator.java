@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 public class DungeonGenerator {
@@ -15,7 +14,6 @@ public class DungeonGenerator {
 	
 	//declares the variables to be used for the screen size
 	private int nBlocks = 30;
-	private int blockSize = 24;
 	
 	//variables for where to generate stairs and holes
 	private int x_stair_loc;
@@ -28,13 +26,11 @@ public class DungeonGenerator {
 	
 	//container for each level that is generated
 	private int[][] level;
-	private boolean created= true;
 	
 	
-	public DungeonGenerator(int numLevels, int nBlocks, int blockSize, int numRooms) {
+	public DungeonGenerator(int numLevels, int nBlocks, int numRooms) {
 		this.numLevels=numLevels;
 		this.nBlocks=nBlocks;
-		this.blockSize=blockSize;
 		this.numRooms= numRooms;
 		
 		levels= new int[numLevels][nBlocks][nBlocks];
@@ -150,17 +146,57 @@ public class DungeonGenerator {
 			}		
 		}
 		
-//		//iterate through and fill internal gaps
-//		for (int x=1; x<room_size-1; x++) {
-//			for (int y=1; y<room_size-1; y++) {
-//				if(((room[x][y] & Board.ROOM_TILE)==0) &&
-//					((room[x+1][y] & Board.ROOM_TILE)!=0) &&
-//					((room[x-1][y] & Board.ROOM_TILE)!=0) &&
-//					((((room[x][y+1] & Board.ROOM_TILE)!=0)) || ((room[x][y-1] & Board.ROOM_TILE)!=0))) {
-//					room[x][y]= room[x][y]+Board.ROOM_TILE;
-//				}
-//			}
-//		}
+		//iterate through and fill internal gaps
+		for (int x=1; x<room_size-1; x++) {
+			for (int y=1; y<room_size-1; y++) {
+				//check if surrounded on all four sides
+				int up = y;
+				int down = room_size-y;
+				int left = x;
+				int right = room_size-x;
+				boolean surrounded = true;
+				
+				//if already a room tile, doesn't matter
+				if ((room[x][y] & Board.ROOM_TILE)!=0) {
+					surrounded = false;
+				}
+				//if not already a room tile, check for a hit of a room tile in each direction
+				else {
+					boolean uhit =false;
+					for (int u = 0; u < up; u++) {
+						if ((room[x][y-u] & Board.ROOM_TILE)!=0) {
+							uhit = true;
+						}
+					}
+					boolean dhit =false;
+					for (int u = 0; u < down; u++) {
+						if ((room[x][y+u] & Board.ROOM_TILE)!=0) {
+							dhit = true;
+						}
+					}
+					boolean lhit =false;
+					for (int u = 0; u < left; u++) {
+						if ((room[x-u][y] & Board.ROOM_TILE)!=0) {
+							lhit = true;
+						}
+					}
+					boolean rhit =false;
+					for (int u = 0; u < right; u++) {
+						if ((room[x+u][y] & Board.ROOM_TILE)!=0) {
+							rhit = true;
+						}
+					}
+					
+					if (!(uhit && dhit && lhit && rhit)) {
+						surrounded = false;
+					}
+				}
+				
+				if (surrounded) {
+					room[x][y]= room[x][y]+Board.ROOM_TILE;
+				}
+			}
+		}
 		
 		for (int i =0; i < room_size; i++) {
 			for (int j=0; j < room_size; j++) {

@@ -3,7 +3,7 @@ public class LevelTester {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		DungeonGenerator d = new DungeonGenerator(3,30,24,15);
+		DungeonGenerator d = new DungeonGenerator(3,30,15);
 		int levels[][][]= d.getLevels();
 		
 		for (int z=0; z<3; z++) {
