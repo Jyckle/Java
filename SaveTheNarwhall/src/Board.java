@@ -32,6 +32,9 @@ public class Board extends JPanel
     private int numGhosts = 5;
     private int pacsLeft, score;
     
+    private int startX=7;
+    private int startY=7;
+    
     //keeps track of the ghosts
     private ArrayList<MoveableShape> ghost;
     
@@ -114,6 +117,8 @@ public class Board extends JPanel
     public final static int POWER_BIT = 32;
     public final static int YUMMY_BITS_PRESENT = 48;
     public final static int HIDDEN = 256;
+    public final static int ROOM_TILE = 512;
+    public final static int OUT_ROOM_TILE = 1024;
     public final static int CLEAR_ALL = 2147483647;
     public final static int REMOVE_YUMMY_BIT = CLEAR_ALL-YUMMY_BIT;
     public final static int UNHIDE = CLEAR_ALL-HIDDEN;
@@ -195,6 +200,7 @@ public class Board extends JPanel
         continueLevel();
     }
     
+    
     //adds the ghosts, and sets the original position of pacman
     private void continueLevel()
     {
@@ -205,7 +211,7 @@ public class Board extends JPanel
 
         dying = false;
         
-        pacman = new Character(screenData, 7, 11, BLOCK_SIZE);
+        pacman = new Character(screenData, startX, startY, BLOCK_SIZE);
         
     }
     
@@ -302,14 +308,54 @@ public class Board extends JPanel
         int px = pacman.getX()/BLOCK_SIZE;
         int py = pacman.getY()/BLOCK_SIZE;
         int ch = screenData[py][px];
-    	if ((ch & UP_STAIRS) != 0) {
+    	//make sure character gets placed one position back from where they were on the last floor
+        if ((ch & UP_STAIRS) != 0) {
     		if (currLevel <(levels.length-1))
     			currLevel++;
+    		int dir = pacman.getDirection();
+    		switch (dir) {
+        	case 0: 
+        		startX= px;
+        		startY= py+1;
+        		break;
+        	case 1: 
+        		startX= px;
+        		startY= py-1;
+        		break;
+        	case 2: 
+        		startX= px-1;
+        		startY= py;
+        		break;
+        	case 3: 
+        		startX= px+1;
+        		startY= py;
+        		break;
+    		}
     		initLevel();
     	}
+        //make sure character gets placed one position back from where they were on the last floor
     	if ((ch & DOWN_STAIRS) != 0) {
     		if (currLevel >0)
     			currLevel--;
+    		int dir = pacman.getDirection();
+    		switch (dir) {
+        	case 0: 
+        		startX= px;
+        		startY= py+1;
+        		break;
+        	case 1: 
+        		startX= px;
+        		startY= py-1;
+        		break;
+        	case 2: 
+        		startX= px-1;
+        		startY= py;
+        		break;
+        	case 3: 
+        		startX= px+1;
+        		startY= py;
+        		break;
+    		}
     		initLevel();
     	}
     	for (int x =-1; x<=1; x++) {
@@ -321,26 +367,7 @@ public class Board extends JPanel
 						
 				}
 			}
-		}
-    		
-    			
-    				
-    		
-    		
-//    		if (py > 0 && py < N_BLOCKS && px >= 0 && px < N_BLOCKS) {
-//    			
-//    		}
-//    		screenData[py][px]= screenData[py][px] & UNHIDE;
-//    		screenData[py+1][px]= screenData[py+1][px] & UNHIDE;
-//    		screenData[py-1][px]= screenData[py-1][px] & UNHIDE;
-//    		screenData[py][px+1]= screenData[py][px+1] & UNHIDE;
-//    		screenData[py][px-1]= screenData[py][px-1] & UNHIDE;
-//    		screenData[py+1][px+1]= screenData[py+1][px+1] & UNHIDE;
-//    		screenData[py+1][px-1]= screenData[py+1][px-1] & UNHIDE;
-//    		screenData[py-1][px+1]= screenData[py-1][px+1] & UNHIDE;
-//    		screenData[py-1][px-1]= screenData[py-1][px-1] & UNHIDE;
-    	
-    	
+		}	
     	
     		
         if (finished)
@@ -432,6 +459,12 @@ public class Board extends JPanel
                 g2d.fillRect(c, r, getWidth(), getHeight());
                 //g2d.drawImage (new ImageIcon("env_pics/rockFloor.jpeg").getImage(), c, r, 24, 24, this);
                 
+                if ((screenData[gr][gc] & ROOM_TILE) != 0)
+                {
+                	g2d.setColor(Color.GREEN);
+                	g2d.fillRect(c, r, BLOCK_SIZE,BLOCK_SIZE );
+                }
+                
                 if ((screenData[gr][gc] & UP_STAIRS) != 0) {
 //                	g2d.setColor (Color.GRAY);
 //                	g2d.fillRect (c, r, 24, 24);
@@ -472,11 +505,11 @@ public class Board extends JPanel
                 	 g2d.fill(new Ellipse2D.Double(c+6,r+6,10,10));
                 }
                 
-                if ((screenData[gr][gc] & HIDDEN) != 0)
-                {
-                	g2d.setColor(Color.BLACK);
-                	g2d.fillRect(c, r, BLOCK_SIZE,BLOCK_SIZE );
-                }
+//                if ((screenData[gr][gc] & HIDDEN) != 0)
+//                {
+//                	g2d.setColor(Color.BLACK);
+//                	g2d.fillRect(c, r, BLOCK_SIZE,BLOCK_SIZE );
+//                }
             }
         }
     }
