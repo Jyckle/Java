@@ -44,67 +44,9 @@ public class Board extends JPanel
     
     private int[][] screenData;
     
-    //contains all the data for the level
-    private final int levelData[][] =
-	    	{
-	    		{ 35, 26, 26, 26, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 38 },
-	    		{ 21, 0, 0, 0, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20 },
-	    		{ 21, 0, 0, 0, 17, 16, 16, 16, 16, 16, 16, 16, 128, 16, 20 },
-	    		{ 21, 0, 0, 0, 17, 16, 16, 24, 16, 16, 16, 16, 64, 16, 20 },
-	    		{ 17, 18, 18, 18, 16, 16, 20, 0, 17, 16, 16, 16, 16, 16, 20 },
-	    		{ 17, 16, 16, 16, 16, 16, 20, 0, 17, 16, 16, 16, 16, 24, 20 },
-	    		{ 25, 16, 16, 16, 24, 24, 28, 0, 25, 24, 24, 16, 20, 0, 21 },
-	    		{ 1, 17, 16, 20, 0, 0, 0, 0, 0, 0, 0, 17, 20, 0, 21 },
-	    		{ 1, 17, 16, 16, 18, 18, 22, 0, 19, 18, 18, 16, 20, 0, 21 },
-	    		{ 1, 17, 16, 16, 16, 16, 20, 0, 17, 16, 16, 16, 20, 0, 21 },
-	    		{ 1, 17, 16, 16, 16, 16, 20, 0, 17, 16, 16, 16, 20, 0, 21 },
-	    		{ 1, 17, 16, 16, 16, 16, 16, 18, 16, 16, 16, 16, 20, 0, 21 },
-	    		{ 1, 17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 20, 0, 21 },
-	    		{ 1, 41, 24, 24, 24, 24, 24, 24, 24, 24, 16, 16, 16, 18, 20 },
-	    		{ 9, 8, 8, 8, 8, 8, 8, 8, 8, 8, 25, 24, 24, 24, 44 }
-
-	    	};
-    private final int level1Data[][] =
-    	{
-    			
-	    		{ 35, 19, 26, 18, 18, 26, 18, 26, 26, 26, 26, 26, 18, 18, 39 },
-	    		{ 21, 21, 0 , 21, 0 , 21, 21, 0 , 0 , 0 , 0 , 0 , 17, 20, 21 },
-	    		{ 21, 21, 0 , 21, 0 , 21, 17, 18, 22, 0 , 35, 18, 16, 20, 21 },
-	    		{ 21, 21, 0 , 21, 0 , 21, 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 21, 0 , 21, 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 21, 0 , 21, 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 21, 0 , 21, 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 21, 0 , 21, 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 21, 0 , 21, 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 21, 0 , 21, 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 21, 0 , 21, 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 21, 0 , 21, 17, 24, 44, 0 , 89, 24, 16, 20, 21 },
-	    		{ 21, 21, 0 , 21, 0 , 21, 21, 0 , 0 , 0 , 0 , 0 , 17 , 20, 21 },
-	    		{ 21, 25, 26, 24, 24, 26, 24, 26, 26, 26, 26, 26, 24, 28, 21 },
-	    		{ 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 28 }
-	    	};
     
-    private final int level2Data[][] =
-    	{
-    			
-	    		{ 35, 19, 26, 18, 18, 26, 18, 26, 26, 26, 26, 26, 18, 18, 39 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 21, 0 , 0 , 0 , 0 , 0 , 17, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 17, 18, 22, 0 , 35, 18, 16, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 41, 28, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 0 , 0 , 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 19, 38, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 17, 16, 20, 0 , 17, 16, 16, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 17, 24, 108, 0 , 153, 24, 16, 20, 21 },
-	    		{ 21, 21, 0 , 17, 20, 0 , 21, 0 , 0 , 0 , 0 , 0 , 17 , 20, 21 },
-	    		{ 21, 25, 26, 24, 24, 26, 24, 26, 26, 26, 26, 26, 24, 28, 21 },
-	    		{ 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 28 }
-	    	};
     
-    private int[][][] levels= {levelData,level1Data,level2Data};
+    private int[][][] levels;
     
     //Symbolic constants for checking values
     public final static int YUMMY_BIT = 16;
@@ -308,7 +250,20 @@ public class Board extends JPanel
         int px = pacman.getX()/BLOCK_SIZE;
         int py = pacman.getY()/BLOCK_SIZE;
         int ch = screenData[py][px];
-    	//make sure character gets placed one position back from where they were on the last floor
+    	
+        //unhide blocks as seen
+        for (int x =-1; x<=1; x++) {
+			for (int y =-1; y<=1; y++) {
+				if((px +x)>= 0 && (px+x)<N_BLOCKS && (py +y)>= 0 && (py+y)<N_BLOCKS) {
+					if ((screenData[py+y][px+x] & HIDDEN) !=0) {
+						screenData[py+y][px+x]= screenData[py+y][px+x] & UNHIDE;
+					}
+						
+				}
+			}
+		}
+        
+        //make sure character gets placed one position back from where they were on the last floor
         if ((ch & UP_STAIRS) != 0) {
     		if (currLevel <(levels.length-1))
     			currLevel++;
@@ -331,6 +286,9 @@ public class Board extends JPanel
         		startY= py;
         		break;
     		}
+    		for (int r = 0; r < N_BLOCKS; r++)
+                for (int c = 0; c < N_BLOCKS; c++)
+                	levels[currLevel-1][r][c]= screenData[r][c];
     		initLevel();
     	}
         //make sure character gets placed one position back from where they were on the last floor
@@ -356,18 +314,13 @@ public class Board extends JPanel
         		startY= py;
         		break;
     		}
+    		for (int r = 0; r < N_BLOCKS; r++)
+                for (int c = 0; c < N_BLOCKS; c++)
+                	levels[currLevel+1][r][c]= screenData[r][c];
     		initLevel();
     	}
-    	for (int x =-1; x<=1; x++) {
-			for (int y =-1; y<=1; y++) {
-				if((px +x)>= 0 && (px+x)<N_BLOCKS && (py +y)>= 0 && (py+y)<N_BLOCKS) {
-					if ((screenData[py+y][px+x] & HIDDEN) !=0) {
-						screenData[py+y][px+x]= screenData[py+y][px+x] & UNHIDE;
-					}
-						
-				}
-			}
-		}	
+    	
+    		
     	
     		
         if (finished)
@@ -504,12 +457,12 @@ public class Board extends JPanel
                 	 g2d.setColor (Color.GREEN);
                 	 g2d.fill(new Ellipse2D.Double(c+6,r+6,10,10));
                 }
-                
-//                if ((screenData[gr][gc] & HIDDEN) != 0)
-//                {
-//                	g2d.setColor(Color.BLACK);
-//                	g2d.fillRect(c, r, BLOCK_SIZE,BLOCK_SIZE );
-//                }
+                //comment out this block to reveal entire map
+                if ((screenData[gr][gc] & HIDDEN) != 0)
+                {
+                	g2d.setColor(Color.BLACK);
+                	g2d.fillRect(c, r, BLOCK_SIZE,BLOCK_SIZE );
+                }
             }
         }
     }
