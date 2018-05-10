@@ -27,6 +27,9 @@ public class DungeonGenerator {
 	//container for each level that is generated
 	private int[][] level;
 	
+	//number of enemies to include in the board
+	private int numEnemies = 10;
+	
 	
 	public DungeonGenerator(int numLevels, int nBlocks, int numRooms) {
 		this.numLevels=numLevels;
@@ -39,6 +42,7 @@ public class DungeonGenerator {
 		initLevel();
 		
 		for(int i=0; i<numLevels; i++) {
+			numEnemies= numEnemies + 2*i;
 			createLevel(i);
 		}
 	}
@@ -62,10 +66,49 @@ public class DungeonGenerator {
 		}
 		
 		//add stairs and ladder
+		addStairs(currLevel,levelIndex);
+		Random rand = new Random();
+		
+		//add enemies
+		int numSpiders = rand.nextInt(numEnemies/4)+2;
+		int numBats = rand.nextInt(numEnemies/2)+2;
+		int numSnakes = numEnemies-numSpiders-numBats;
+			
+		//add snake spawns
+		for(int i = 0; i < numSnakes; i++) {
+			int x = rand.nextInt(nBlocks-2)+1;
+			int y = rand.nextInt(nBlocks-2)+1;
+			placeEnemy(x,y,currLevel,Board.SNAKE_SPAWN);
+		}
+		
+		//add bat spawns
+		for(int i = 0; i < numBats; i++) {
+			int x = rand.nextInt(nBlocks-2)+1;
+			int y = rand.nextInt(nBlocks-2)+1;
+			placeEnemy(x,y,currLevel,Board.BAT_SPAWN);
+		}
+				
+		//add spider spawns
+		for(int i = 0; i < numSpiders; i++) {
+			int x = rand.nextInt(nBlocks-2)+1;
+			int y = rand.nextInt(nBlocks-2)+1;
+			placeEnemy(x,y,currLevel,Board.SPIDER_SPAWN);
+		}
+		
+		//add the level to the list of levels
+		levels[levelIndex]=currLevel;
+	}
+	
+	
+	private void addStairs(int[][] currLevel, int levelIndex) {
 		Random rand = new Random();
 
 		x_stair_loc = rand.nextInt(nBlocks);
 		y_stair_loc = rand.nextInt(nBlocks);
+		
+		int[] stair = checkLoc(x_stair_loc,y_stair_loc,currLevel);
+		x_stair_loc = stair[0];
+		y_stair_loc = stair[1];
 		
 		if(levelIndex==0) {
 			currLevel[x_stair_loc][y_stair_loc]=currLevel[x_stair_loc][y_stair_loc]+Board.UP_STAIRS;
@@ -81,8 +124,30 @@ public class DungeonGenerator {
 		x_hole_loc = x_stair_loc;
 		y_hole_loc = y_stair_loc;
 		
-		//add the level to the list of levels
-		levels[levelIndex]=currLevel;
+	}
+	
+	private int[] checkLoc(int xin, int yin, int[][] currLevel) {
+		boolean placed = false;
+		int x = xin;
+		int y = yin;
+		while(!placed) {
+			if (((currLevel[x][y] & Board.ROOM_TILE)==0)){
+				placed=true;
+			}
+			else if(y >= nBlocks-1)
+			{
+				y=0;
+				x++;
+			}
+			else if(x >= nBlocks -1) {
+				x=0;
+			}
+			else {
+				y++;
+			}
+		}
+		int[] result= {x,y};
+		return result;
 	}
 	
 	
@@ -340,6 +405,42 @@ public class DungeonGenerator {
 			int j = arr[1];
 			room[i][j]=room[i][j] & (Board.CLEAR_ALL-Board.BOTTOM_WALL);
 			room[i+1][j]= room[i+1][j] & (Board.CLEAR_ALL-Board.TOP_WALL);
+		}
+		
+	}
+	
+	//tool to help place enemies within the level
+	private void placeEnemy(int x, int y, int[][] level, int enemyType) {
+		boolean placed = false;
+		while(!placed) {
+			//dont place on top of another enemy or directly around an up or down stair
+			if (((level[x][y] & Board.SPIDER_SPAWN)!=0) ||
+					((level[x][y] & Board.BAT_SPAWN)!=0) ||
+					((level[x][y] & Board.SNAKE_SPAWN)!=0) ||
+					((level[x][y] & Board.UP_STAIRS)!=0) ||
+					((level[x][y] & Board.DOWN_STAIRS)!=0) ||
+					((level[x+1][y] & Board.DOWN_STAIRS)!=0) ||
+					((level[x-1][y] & Board.DOWN_STAIRS)!=0) ||
+					((level[x][y+1] & Board.DOWN_STAIRS)!=0) ||
+					((level[x][y-1] & Board.DOWN_STAIRS)!=0) ||
+					((level[x+1][y] & Board.UP_STAIRS)!=0) ||
+					((level[x-1][y] & Board.UP_STAIRS)!=0) ||
+					((level[x][y+1] & Board.UP_STAIRS)!=0) ||
+					((level[x][y-1] & Board.UP_STAIRS)!=0))
+					 {
+				if(y>=nBlocks-2) {
+					y=1;
+					x++;
+				}
+				if(x>=nBlocks-2) {
+					x=1;
+				}
+				y++;
+			}
+			else {
+				level[x][y]=level[x][y] + enemyType;
+				placed = true;
+			}
 		}
 		
 	}

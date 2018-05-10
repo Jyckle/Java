@@ -134,5 +134,9 @@ public class Enemy implements MoveableShape {
 	public void attack() {
 
 	}
+	
+	public void removeSpawn() {
+		
+	}
 
 }

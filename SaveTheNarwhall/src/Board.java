@@ -29,7 +29,7 @@ public class Board extends JPanel
     
     //to keep track of level and number of ghosts
     private int currLevel = 0;
-    private int numGhosts = 5;
+    private int numEnemies;
     private int pacsLeft, score;
     
     private int startX=7;
@@ -37,6 +37,7 @@ public class Board extends JPanel
     
     //keeps track of the ghosts
     private ArrayList<MoveableShape> ghost;
+    private ArrayList<MoveableShape> enemies;
     
     private Character pacman;
     	    
@@ -61,6 +62,9 @@ public class Board extends JPanel
     public final static int HIDDEN = 256;
     public final static int ROOM_TILE = 512;
     public final static int OUT_ROOM_TILE = 1024;
+    public final static int SNAKE_SPAWN = 2048;
+    public final static int SPIDER_SPAWN = 4096;
+    public final static int BAT_SPAWN = 8192;
     public final static int CLEAR_ALL = 2147483647;
     public final static int REMOVE_YUMMY_BIT = CLEAR_ALL-YUMMY_BIT;
     public final static int UNHIDE = CLEAR_ALL-HIDDEN;
@@ -122,7 +126,6 @@ public class Board extends JPanel
     {
         pacsLeft = 3;
         score = 0;
-        numGhosts = 5;
         currLevel = 0;
         moving[0] = false;
         moving[1] = false;
@@ -138,7 +141,22 @@ public class Board extends JPanel
         for (int r = 0; r < N_BLOCKS; r++)
             for (int c = 0; c < N_BLOCKS; c++)
             	screenData[r][c] = levels[currLevel][r][c];
-
+        
+        //count how many enemies are in the level
+        numEnemies =0;
+        enemies = new ArrayList<MoveableShape>();
+        for (int r = 0; r < N_BLOCKS; r++) {
+            for (int c = 0; c < N_BLOCKS; c++) {
+            	if (((screenData[r][c] & SNAKE_SPAWN)!=0)||
+            		((screenData[r][c] & SPIDER_SPAWN)!=0)||
+            		((screenData[r][c] & BAT_SPAWN)!=0)) {
+            		numEnemies++;
+            		enemies.add(new GhostShape(screenData, currLevel, c, r, BLOCK_SIZE));
+            	}
+            }
+            
+        }
+        
         continueLevel();
     }
     
@@ -146,10 +164,10 @@ public class Board extends JPanel
     //adds the ghosts, and sets the original position of pacman
     private void continueLevel()
     {
-    	ghost = new ArrayList<MoveableShape>();
-    	
-    	for (int i = 0; i < numGhosts; i++)
-    		ghost.add (new GhostShape (screenData, currLevel, 4, 4, BLOCK_SIZE));
+//    	ghost = new ArrayList<MoveableShape>();
+//    	
+//    	for (int i = 0; i < numEnemies; i++)
+//    		ghost.add (new GhostShape (screenData, currLevel, 4, 4, BLOCK_SIZE));
 
         dying = false;
         
@@ -175,17 +193,37 @@ public class Board extends JPanel
     private void showIntroScreen (Graphics2D g2d)
     {
         g2d.setColor (new Color (0, 32, 48));
-        g2d.fillRect (50, SCREEN_SIZE / 2 - 30, SCREEN_SIZE - 100, 50);
+        g2d.fillRect (50, SCREEN_SIZE / 2 -250 , SCREEN_SIZE - 100, 500);
         g2d.setColor (Color.white);
-        g2d.drawRect (50, SCREEN_SIZE / 2 - 30, SCREEN_SIZE - 100, 50);
+        g2d.drawRect (50, SCREEN_SIZE / 2 - 250, SCREEN_SIZE - 100, 500);
 
-        String s = "Press s to start.";
+        String s = "Your mission, should you choose to accept it, is to";
+        String t = "SAVE THE NARWHALL";
+        String u = "Use the arrow keys to move and space bar to attack";
+        String v = "Explore and progress to the top of the castle";
+        String w = "Destroy those who stand in your way";
+        String x = "The Narwhall awaits your rescue";
+        String y = " Press s to start.";
         Font small = new Font ("Helvetica", Font.BOLD, 14);
+        Font large = new Font ("Impact", Font.BOLD, 25);
         FontMetrics metr = getFontMetrics (small);
+        FontMetrics metr2 = getFontMetrics (large);
 
         g2d.setColor (Color.white);
         g2d.setFont (small);
-        g2d.drawString (s, (SCREEN_SIZE - metr.stringWidth(s)) / 2, SCREEN_SIZE / 2);
+        g2d.drawString (s, (SCREEN_SIZE - metr.stringWidth(s)) / 2, SCREEN_SIZE / 3);
+        
+        g2d.setFont (large);
+        g2d.drawString (t, (SCREEN_SIZE - metr2.stringWidth(t)) / 2, SCREEN_SIZE / 3 +50);
+        
+        g2d.setFont (small);
+        
+        g2d.drawString (u, (SCREEN_SIZE - metr.stringWidth(u)) / 2, SCREEN_SIZE / 3 +100);
+        g2d.drawString (v, (SCREEN_SIZE - metr.stringWidth(v)) / 2, SCREEN_SIZE / 3 +125);
+        g2d.drawString (w, (SCREEN_SIZE - metr.stringWidth(w)) / 2, SCREEN_SIZE / 3 +150);
+        g2d.drawString (x, (SCREEN_SIZE - metr.stringWidth(x)) / 2, SCREEN_SIZE / 3 +175);
+        g2d.drawString (y, (SCREEN_SIZE - metr.stringWidth(y)) / 2, SCREEN_SIZE / 3 +300);
+        
     }
     
     //draws the score in the bottom right corner of the frame
@@ -257,8 +295,7 @@ public class Board extends JPanel
 				if((px +x)>= 0 && (px+x)<N_BLOCKS && (py +y)>= 0 && (py+y)<N_BLOCKS) {
 					if ((screenData[py+y][px+x] & HIDDEN) !=0) {
 						screenData[py+y][px+x]= screenData[py+y][px+x] & UNHIDE;
-					}
-						
+					}	
 				}
 			}
 		}
@@ -327,8 +364,8 @@ public class Board extends JPanel
         {
             score += 50;
 
-            if (numGhosts < MAX_GHOSTS)
-                numGhosts++;
+//            if (numEnemies < MAX_GHOSTS)
+//                numEnemies++;
 
             if (currLevel < MAX_LEVEL)
                 currLevel++;
@@ -351,27 +388,30 @@ public class Board extends JPanel
     //move the ghosts and check for collision with pacman
     private void moveGhosts (Graphics2D g2d)
     {
-        for (int i = 0; i < numGhosts; i++)
+        for (int i = 0; i < numEnemies; i++)
         {      	
-        	ghost.get(i).move();
+        	enemies.get(i).move();
 
-        	ghost.get(i).draw (g2d);
+        	enemies.get(i).draw (g2d);
             
-            if (ghost.get(i).contains (pacman.getX(), pacman.getY()))
+            if (enemies.get(i).contains (pacman.getX(), pacman.getY()))
             {
                 if (!scared)
                 {
                 	if (pacman.removeHealth(100))
                 		dying = true;
                 	else {
-                		ghost.remove(i);
-                		ghost.add (new GhostShape (screenData, currLevel, 4, 4, BLOCK_SIZE));
+                		numEnemies--;
+                		enemies.get(i).removeSpawn();
+                		enemies.remove(i);
                 	}
                 }
                 else {
                 	score += 50;
-            		ghost.remove(i);
-            		ghost.add (new GhostShape (screenData, currLevel, 4, 4, BLOCK_SIZE));
+                	numEnemies--;
+                	enemies.get(i).removeSpawn();
+            		enemies.remove(i);
+            		
                 }
                 	
             }
@@ -412,9 +452,27 @@ public class Board extends JPanel
                 g2d.fillRect(c, r, getWidth(), getHeight());
                 //g2d.drawImage (new ImageIcon("env_pics/rockFloor.jpeg").getImage(), c, r, 24, 24, this);
                 
-                if ((screenData[gr][gc] & ROOM_TILE) != 0)
+                if ((screenData[gr][gc] & SNAKE_SPAWN) != 0)
                 {
                 	g2d.setColor(Color.GREEN);
+                	g2d.fillRect(c, r, BLOCK_SIZE,BLOCK_SIZE );
+                }
+                
+                if ((screenData[gr][gc] & BAT_SPAWN) != 0)
+                {
+                	g2d.setColor(Color.RED);
+                	g2d.fillRect(c, r, BLOCK_SIZE,BLOCK_SIZE );
+                }
+                if ((screenData[gr][gc] & SPIDER_SPAWN) != 0)
+                {
+                	g2d.setColor(Color.BLUE);
+                	g2d.fillRect(c, r, BLOCK_SIZE,BLOCK_SIZE );
+                }
+                
+                //color inside of rooms
+                if ((screenData[gr][gc] & ROOM_TILE) != 0)
+                {
+                	g2d.setColor(new Color(81,34,0));
                 	g2d.fillRect(c, r, BLOCK_SIZE,BLOCK_SIZE );
                 }
                 
@@ -517,12 +575,13 @@ public class Board extends JPanel
     		g2d.drawImage (attackImage, pacman.getX() + BLOCK_SIZE*dx, 
     				pacman.getY() + BLOCK_SIZE*dy, 22, 22, this);
     		
-    		for (int i = 0; i < numGhosts; i++)
+    		for (int i = 0; i < numEnemies; i++)
             {      	          
-                if (ghost.get(i).contains (pacman.getX() + BLOCK_SIZE*dx, pacman.getY() + BLOCK_SIZE*dy))
+                if (enemies.get(i).contains (pacman.getX() + BLOCK_SIZE*dx, pacman.getY() + BLOCK_SIZE*dy))
                 {
-                    ghost.remove(i);
-                    ghost.add (new GhostShape (screenData, currLevel, 4, 4, BLOCK_SIZE));
+                	numEnemies--;
+                	enemies.get(i).removeSpawn();
+                    enemies.remove(i);
                 }   
             }
     	}
