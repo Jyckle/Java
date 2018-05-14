@@ -42,11 +42,43 @@ public class DungeonGenerator {
 		initLevel();
 		
 		for(int i=0; i<numLevels; i++) {
-			numEnemies= numEnemies + 2*i;
-			createLevel(i);
+			if (i==numLevels-1) {
+				createFinalLevel(i);
+			}
+			else {
+				numEnemies= numEnemies + 2*i;
+				createLevel(i);
+			}
 		}
 	}
 	
+	//create the final level
+	public void createFinalLevel(int levelIndex) {
+		int[][] currLevel= new int[nBlocks][nBlocks];
+		
+		for(int i=0; i<nBlocks; i++) {
+			currLevel[i] = level[i].clone();
+		}
+		
+		//unhide all and add Dragon Spawn
+		for (int i =0; i<nBlocks; i++) {
+			for (int j =0; j<nBlocks; j++) {
+				currLevel[i][j]=currLevel[i][j]&(Board.UNHIDE);
+				if (i ==nBlocks/2 && j== nBlocks/2) {
+					currLevel[i][j]=currLevel[i][j]+Board.DRAGON_SPAWN;
+				}
+				if (i>nBlocks/7 && i< nBlocks*5/6 && j>nBlocks/7 && j<nBlocks/6*5) {
+					currLevel[i][j]=currLevel[i][j]+Board.BLOCKED;
+				}
+			}
+		}
+		
+		addStairs(currLevel,levelIndex);
+		
+		//add the level to the list of levels
+		levels[levelIndex]=currLevel;
+	}
+		
 	//method for user to get output
 	public int[][][] getLevels() {
 		return levels;
@@ -65,7 +97,7 @@ public class DungeonGenerator {
 			placeRoom(rooms[i],currLevel);
 		}
 		
-		//add stairs and ladder
+		//add stairs and hole
 		addStairs(currLevel,levelIndex);
 		Random rand = new Random();
 		
@@ -114,6 +146,13 @@ public class DungeonGenerator {
 			currLevel[x_stair_loc][y_stair_loc]=currLevel[x_stair_loc][y_stair_loc]+Board.UP_STAIRS;
 		}
 		else if(levelIndex==numLevels-1) {
+			currLevel[nBlocks-1][nBlocks/2]=currLevel[nBlocks-1][nBlocks/2]+Board.DOWN_STAIRS;
+		}
+		else if(levelIndex==numLevels-2) {
+			//add the specific location of this stairs
+			x_stair_loc = nBlocks-1;
+			y_stair_loc = nBlocks/2;
+			currLevel[x_stair_loc][y_stair_loc]=currLevel[x_stair_loc][y_stair_loc]+Board.UP_STAIRS;
 			currLevel[x_hole_loc][y_hole_loc]=currLevel[x_hole_loc][y_hole_loc]+Board.DOWN_STAIRS;
 		}
 		else {
@@ -517,10 +556,6 @@ public class DungeonGenerator {
 				if(j==nBlocks-1) {
 					level[i][j]=level[i][j]+Board.RIGHT_WALL;
 				}
-				if(i!=0 && i!=nBlocks-1 &&j!=0 && j!=nBlocks-1) {
-					level[i][j]=level[i][j]+Board.YUMMY_BIT;
-				}
-				
 				level[i][j]=level[i][j]+Board.HIDDEN;
 			}
 		}

@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
@@ -14,32 +15,40 @@ import javax.swing.*;
 public class Board extends JPanel
 {
     //declares the variables to be used for the screen size
-	private final static int N_BLOCKS = 30;
-    private final static int BLOCK_SIZE = 24;
+	public final static int N_BLOCKS = 30;
+    public final static int BLOCK_SIZE = 24;
     private final static int SCREEN_SIZE = N_BLOCKS * BLOCK_SIZE;
-    private final static int BORDER_SIZE = 25;
-       
-    //variables affecting level and speed
-    protected final static int MAX_LEVEL = 6;
-    private final static int MAX_GHOSTS = 12;    
+    private final static int BORDER_SIZE = 25;   
     
     //booleans to check for if ingame or dying
     private boolean inGame = false;
+    private boolean winGame = false;
     private boolean dying = false;
     
-    //to keep track of level and number of ghosts
+    private int spiderTime=0;
+    private int spiderAttackTime=40;
+    private int dragonTime=0;
+    private int dragonAttackTime=2;
+    private int shootTime=0;
+    private int shootTimeLimit=10;
+    
+    //to keep track of level and number of enemies
     private int currLevel = 0;
-    private int numEnemies;
-    private int pacsLeft, score;
+    private int numEnemies= 0;
+    private int livesLeft, score;
     
     private int startX=7;
     private int startY=7;
     
-    //keeps track of the ghosts
-    private ArrayList<MoveableShape> ghost;
-    private ArrayList<MoveableShape> enemies;
+    private int attackDir;
     
-    private Character pacman;
+    //keeps track of the enemies
+//    private ArrayList<MoveableShape> enemies;
+    private ArrayList<Enemy> enemies;
+    private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
+    private ArrayList<Projectile> enemyProjectiles = new ArrayList<Projectile>();
+    
+    private Character knight;
     	    
     private Timer timer;
     
@@ -65,27 +74,16 @@ public class Board extends JPanel
     public final static int SNAKE_SPAWN = 2048;
     public final static int SPIDER_SPAWN = 4096;
     public final static int BAT_SPAWN = 8192;
+    public final static int DRAGON_SPAWN = 16384;
+    public final static int BLOCKED = 32768;
     public final static int CLEAR_ALL = 2147483647;
     public final static int REMOVE_YUMMY_BIT = CLEAR_ALL-YUMMY_BIT;
     public final static int UNHIDE = CLEAR_ALL-HIDDEN;
     
     
-    //when power bit is eaten, scared becomes true
-    private boolean scared = false;
-    private final static int POWER_TIME = 5;
-    private int scaredTimers = 0;
-    
     //integer to check for movement
     private boolean moving[] = {false, false, false, false};
-    
-    //attacking
-    private int damage= 0;
-    private boolean attacking = false;
-    private Image attackImage = new ImageIcon("char_pics/fire.png").getImage();
-
-    
-      
-    
+        
     //calls all of the necessary methods for instantiating a Board
     public Board(int[][][] levels)
     {
@@ -124,7 +122,7 @@ public class Board extends JPanel
     //sets the starting values for the game and initiates a level
     private void initGame()
     {
-        pacsLeft = 3;
+        livesLeft = 3;
         score = 0;
         currLevel = 0;
         moving[0] = false;
@@ -138,21 +136,36 @@ public class Board extends JPanel
     //transfers level data to the screen, continues with the level
     private void initLevel()
     {
-        for (int r = 0; r < N_BLOCKS; r++)
+    	    	
+    	for (int r = 0; r < N_BLOCKS; r++)
             for (int c = 0; c < N_BLOCKS; c++)
             	screenData[r][c] = levels[currLevel][r][c];
         
+    	knight = new Character(screenData, startX, startY, BLOCK_SIZE);
+
         //count how many enemies are in the level
         numEnemies =0;
-        enemies = new ArrayList<MoveableShape>();
+//        enemies = new ArrayList<MoveableShape>();
+        enemies = new ArrayList<Enemy>();
         for (int r = 0; r < N_BLOCKS; r++) {
             for (int c = 0; c < N_BLOCKS; c++) {
-            	if (((screenData[r][c] & SNAKE_SPAWN)!=0)||
-            		((screenData[r][c] & SPIDER_SPAWN)!=0)||
-            		((screenData[r][c] & BAT_SPAWN)!=0)) {
+            	if ((screenData[r][c] & SNAKE_SPAWN)!=0) {
             		numEnemies++;
-            		enemies.add(new GhostShape(screenData, currLevel, c, r, BLOCK_SIZE));
+            		enemies.add(new Snake(screenData, currLevel, c, r, BLOCK_SIZE,this.knight));
             	}
+            	else if ((screenData[r][c] & SPIDER_SPAWN)!=0) {
+            		numEnemies++;
+            		enemies.add(new Spider(screenData, currLevel, c, r, BLOCK_SIZE,this.knight));
+            	}
+            	else if ((screenData[r][c] & BAT_SPAWN)!=0){
+            		numEnemies++;
+            		enemies.add(new Bat(screenData, currLevel, c, r, BLOCK_SIZE,this.knight));
+            	}
+            	else if ((screenData[r][c] & DRAGON_SPAWN)!=0){
+            		numEnemies++;
+            		enemies.add(new Dragon(screenData, currLevel, c-10, r-10, BLOCK_SIZE*20,this.knight));
+            	}
+      
             }
             
         }
@@ -161,17 +174,12 @@ public class Board extends JPanel
     }
     
     
-    //adds the ghosts, and sets the original position of pacman
+    //Sets the position of the character
     private void continueLevel()
     {
-//    	ghost = new ArrayList<MoveableShape>();
-//    	
-//    	for (int i = 0; i < numEnemies; i++)
-//    		ghost.add (new GhostShape (screenData, currLevel, 4, 4, BLOCK_SIZE));
-
         dying = false;
         
-        pacman = new Character(screenData, startX, startY, BLOCK_SIZE);
+        knight.setPos(startX, startY);
         
     }
     
@@ -182,9 +190,9 @@ public class Board extends JPanel
             death();
         else
         {
-            movePacman();
-            drawPacman (g2d);
-            moveGhosts (g2d);
+            moveCharacter();
+            drawCharacter (g2d);
+            moveEnemies (g2d);
             checkMaze ();
         }
     }
@@ -199,7 +207,7 @@ public class Board extends JPanel
 
         String s = "Your mission, should you choose to accept it, is to";
         String t = "SAVE THE NARWHALL";
-        String u = "Use the arrow keys to move and space bar to attack";
+        String u = "Use the arrow keys to move, WASD to aim, and space bar to attack";
         String v = "Explore and progress to the top of the castle";
         String w = "Destroy those who stand in your way";
         String x = "The Narwhall awaits your rescue";
@@ -226,72 +234,69 @@ public class Board extends JPanel
         
     }
     
+ // sets up the end game screen
+    private void showWinScreen (Graphics2D g2d)
+    {
+        g2d.setColor (new Color (0, 32, 48));
+        g2d.fillRect (10, 10 , SCREEN_SIZE - 20, SCREEN_SIZE - 20);
+        g2d.setColor (Color.white);
+        g2d.drawRect (10, 10, SCREEN_SIZE - 20, SCREEN_SIZE - 20);
+
+        String t = "CONGRATULATIONS!!!!";
+        String u = "Final Score: " + score;
+        String y = " Thank you for saving me, brave adventurer!";
+        String z = "Close the window to exit";
+        Font small = new Font ("Helvetica", Font.BOLD, 14);
+        Font large = new Font ("Impact", Font.BOLD, 25);
+        FontMetrics metr = getFontMetrics (small);
+        FontMetrics metr2 = getFontMetrics (large);
+        
+        g2d.setColor (Color.white);
+        
+        g2d.setFont (large);
+        g2d.drawString (t, (SCREEN_SIZE - metr2.stringWidth(t)) / 2, SCREEN_SIZE / 6);
+        
+        g2d.drawImage(new ImageIcon("char_pics/narwhall.png").getImage(), SCREEN_SIZE/4+50, SCREEN_SIZE/4, this);
+        
+        g2d.setFont (small);
+        g2d.drawString (u, (SCREEN_SIZE - metr.stringWidth(u)) / 2, SCREEN_SIZE / 6 + 25);
+        g2d.drawString (y, (SCREEN_SIZE - metr.stringWidth(y)) / 2, SCREEN_SIZE / 3 +300);
+        g2d.drawString (z, (SCREEN_SIZE - metr.stringWidth(z)) / 2, SCREEN_SIZE / 3 +325);
+        
+        
+    }
+    
+    
     //draws the score in the bottom right corner of the frame
     private void drawScore (Graphics2D g)
     {
-    	int ch = screenData[pacman.getY()/BLOCK_SIZE][pacman.getX()/BLOCK_SIZE];
-    	if ((ch & POWER_BIT) != 0) {
-    		screenData[pacman.getY()/BLOCK_SIZE][pacman.getX()/BLOCK_SIZE] = (int) (ch & REMOVE_YUMMY_BIT);
-            score++;
-            scared();
-    	}
-    	else if (( ch & YUMMY_BIT) != 0)
-        {
-        	screenData[pacman.getY()/BLOCK_SIZE][pacman.getX()/BLOCK_SIZE] = (int) (ch & REMOVE_YUMMY_BIT);
-            score++;
-        }
     	
-    	String s = "Health: " + pacman.getHealth();
+    	String s = "Health: " + knight.getHealth();
+    	String t = "Score: " + score;
         Font smallFont = new Font ("Helvetica", Font.BOLD, 14);
         g.setFont (smallFont);
-        g.setColor (new Color (96, 128, 255));
+        g.setColor (Color.RED);
         g.drawString (s, SCREEN_SIZE / 2 + 96, SCREEN_SIZE + 16);
+        g.setColor (Color.BLACK);
+        g.drawString (t, SCREEN_SIZE / 2 + 200, SCREEN_SIZE + 16);
 
-        for (int i = 0; i < pacsLeft; i++)
-            g.drawImage (new ImageIcon("env_pics/heart.png").getImage(), i * 28 + 8, SCREEN_SIZE + 1, 22, 22, this);
+        for (int i = 0; i < livesLeft; i++)
+            g.drawImage (new ImageIcon("env_pics/heart.png").getImage(), i * 28 + 8, SCREEN_SIZE + 1, BLOCK_SIZE, 22, this);
     }
     
-    //timer for power bit
-    public void scared()
-    {
-    	scared=true;
-    	scaredTimers++;
-    	new java.util.Timer().schedule( 
-    	        new java.util.TimerTask() {
-    	            public void run() {
-    	                if(scaredTimers>1) {
-    	                	cancel();
-    	                	scaredTimers--;
-    	                }	
-    	                else {
-    	                	scared=false;
-    	                	scaredTimers--;
-    	                }
-    	                    
-    	            }
-    	        }, 
-    	        POWER_TIME*1000);      
-    }
     
-    // check if all collectibles are gone
+    // check for various conditions
     private void checkMaze()
     {
-        boolean finished = true;
-
-        for (int r = 0; r < N_BLOCKS; r++)
-        	for (int c = 0; c < N_BLOCKS; c++)
-        	{
-                if ((screenData[r][c] & YUMMY_BITS_PRESENT) != 0)
-                    finished = false;             
-            }
+        boolean finished = false;
         
-        int px = pacman.getX()/BLOCK_SIZE;
-        int py = pacman.getY()/BLOCK_SIZE;
+        int px = knight.getX()/BLOCK_SIZE;
+        int py = knight.getY()/BLOCK_SIZE;
         int ch = screenData[py][px];
     	
         //unhide blocks as seen
-        for (int x =-1; x<=1; x++) {
-			for (int y =-1; y<=1; y++) {
+        for (int x =-4; x<=4; x++) {
+			for (int y =-4; y<=4; y++) {
 				if((px +x)>= 0 && (px+x)<N_BLOCKS && (py +y)>= 0 && (py+y)<N_BLOCKS) {
 					if ((screenData[py+y][px+x] & HIDDEN) !=0) {
 						screenData[py+y][px+x]= screenData[py+y][px+x] & UNHIDE;
@@ -304,7 +309,7 @@ public class Board extends JPanel
         if ((ch & UP_STAIRS) != 0) {
     		if (currLevel <(levels.length-1))
     			currLevel++;
-    		int dir = pacman.getDirection();
+    		int dir = knight.getDirection();
     		switch (dir) {
         	case 0: 
         		startX= px;
@@ -332,7 +337,7 @@ public class Board extends JPanel
     	if ((ch & DOWN_STAIRS) != 0) {
     		if (currLevel >0)
     			currLevel--;
-    		int dir = pacman.getDirection();
+    		int dir = knight.getDirection();
     		switch (dir) {
         	case 0: 
         		startX= px;
@@ -357,18 +362,61 @@ public class Board extends JPanel
     		initLevel();
     	}
     	
-    		
+    	//handle projectile explosions
+    	if (projectiles.size() >= 1) {
+        	for (int i=0; i<projectiles.size();i++) {
+        		int x = projectiles.get(i).getX()/BLOCK_SIZE;
+        		int y =projectiles.get(i).getY()/BLOCK_SIZE;
+        		int dir = projectiles.get(i).getDir();
+        		if(x>=0 && x<N_BLOCKS-1 && y>=0 && y<N_BLOCKS-1) {
+        			if((((screenData[y][x]& RIGHT_WALL)!=0)&& (dir==1))||
+        					(((screenData[y][x+1]& LEFT_WALL)!=0)&& (dir==1))||
+        					(((screenData[y][x]& RIGHT_WALL)!=0) && (dir==0))||
+        					(((screenData[y+1][x]& TOP_WALL)!=0)&& (dir==3))||
+        					(((screenData[y][x]& BOTTOM_WALL)!=0)&& (dir==3))||
+        					(((screenData[y][x]& BOTTOM_WALL)!=0)&& (dir==2))||
+        					(((screenData[y+1][x]& HIDDEN)!=0)&& (dir==3))||
+        					(((screenData[y][x+1]& HIDDEN)!=0)&& (dir==1))||
+        					((screenData[y][x]& HIDDEN)!=0)) {
+            			projectiles.remove(i);
+            			break;
+            		}
+        		}
+        		        		
+            }
+        }
     	
+    	//handle projectile explosions
+    	if (enemyProjectiles.size() >= 1) {
+        	for (int i=0; i<enemyProjectiles.size();i++) {
+        		int x = enemyProjectiles.get(i).getX()/BLOCK_SIZE;
+        		int y =enemyProjectiles.get(i).getY()/BLOCK_SIZE;
+        		int dir = enemyProjectiles.get(i).getDir();
+        		if(x>=0 && x<N_BLOCKS-1 && y>=0 && y<N_BLOCKS-1) {
+        			if((((screenData[y][x]& RIGHT_WALL)!=0)&& (dir==1))||
+        					(((screenData[y][x+1]& LEFT_WALL)!=0)&& (dir==1))||
+        					(((screenData[y][x]& RIGHT_WALL)!=0) && (dir==0))||
+        					(((screenData[y+1][x]& TOP_WALL)!=0)&& (dir==3))||
+        					(((screenData[y][x]& BOTTOM_WALL)!=0)&& (dir==3))||
+        					(((screenData[y][x]& BOTTOM_WALL)!=0)&& (dir==2))||
+        					(((screenData[y+1][x]& HIDDEN)!=0)&& (dir==3))||
+        					(((screenData[y][x+1]& HIDDEN)!=0)&& (dir==1))||
+        					((screenData[y][x]& HIDDEN)!=0)) {
+            			enemyProjectiles.remove(i);
+            			break;
+            		}
+        		}
+        		        		
+            }
+        }
+    	
+    	if (currLevel == levels.length-1 && numEnemies <= 0) {
+    		winGame=true;
+    	}
     		
         if (finished)
         {
             score += 50;
-
-//            if (numEnemies < MAX_GHOSTS)
-//                numEnemies++;
-
-            if (currLevel < MAX_LEVEL)
-                currLevel++;
 
             initLevel();
         }
@@ -377,57 +425,109 @@ public class Board extends JPanel
     //reduces number of lives, if none left, then end the game
     private void death()
     {
-        pacsLeft--;
+        livesLeft--;
 
-        if (pacsLeft == 0)
+        if (livesLeft == 0)
             inGame = false;
 
         continueLevel();
     }
     
-    //move the ghosts and check for collision with pacman
-    private void moveGhosts (Graphics2D g2d)
+    //move the enemies and check for collision with character
+    private void moveEnemies (Graphics2D g2d)
     {
         for (int i = 0; i < numEnemies; i++)
         {      	
         	enemies.get(i).move();
 
         	enemies.get(i).draw (g2d);
+        	
+        	//let Spiders shoot 
+        	if (Objects.equals(enemies.get(i).getType(),"Spider")) {
+        		if(spiderTime>=spiderAttackTime) {
+        			enemyProjectiles.add(enemies.get(i).attack());
+        			spiderTime=0;
+        		}
+        		spiderTime++;
+        	}
+        	
+        	if (Objects.equals(enemies.get(i).getType(),"Dragon")) {
+        		if(dragonTime>=dragonAttackTime) {
+        			enemyProjectiles.add(enemies.get(i).attack());
+        			dragonTime=0;
+        		}
+        		dragonTime++;
+        	}
             
-            if (enemies.get(i).contains (pacman.getX(), pacman.getY()))
-            {
-                if (!scared)
-                {
-                	if (pacman.removeHealth(100))
-                		dying = true;
-                	else {
-                		numEnemies--;
-                		enemies.get(i).removeSpawn();
-                		enemies.remove(i);
-                	}
+        	if (enemies.get(i).contains (knight.getX(), knight.getY()))
+        	{
+
+        		if (knight.removeHealth(100))
+        			dying = true;        		
+        		else{
+        			numEnemies--;
+        			enemies.get(i).removeSpawn();
+        			enemies.remove(i);
+        		}
+
+        	}
+            
+            if (projectiles.size() >=1) {
+            	for (int j=0; j<projectiles.size();j++) {
+                	if (enemies.get(i).contains (projectiles.get(j).getX(), projectiles.get(j).getY()))
+                    {
+                		enemies.get(i).removeHealth(projectiles.get(j).getDamage());
+                		projectiles.remove(j);
+                		if (enemies.get(i).checkDeath()) {
+                			if(Objects.equals(enemies.get(i).getType(),"Dragon")){
+                				score += 1000;
+                    			numEnemies--;
+                        		enemies.get(i).removeSpawn();
+                        		enemies.remove(i);
+                           		winGame=true;
+                        		inGame=false;
+                        		break;
+                			}
+                			else {
+                				score += 50;
+                    			numEnemies--;
+                        		enemies.get(i).removeSpawn();
+                        		enemies.remove(i);
+                        		break;
+                			}
+                		}              			
+                    }	
                 }
-                else {
-                	score += 50;
-                	numEnemies--;
-                	enemies.get(i).removeSpawn();
-            		enemies.remove(i);
-            		
-                }
-                	
-            }
+            }                      
         }
+        
+        
     }
     
     //pacman's movement properties
-    private void movePacman()
+    private void moveCharacter()
     {    	 
-    	pacman.move();
+    	knight.move();
+    	shootTime++;
+    	
+    	
+    	
+    	if (enemyProjectiles.size() >=1) {
+        	for (int j=0; j<enemyProjectiles.size();j++) {
+            	if (knight.contains(enemyProjectiles.get(j).getX(), enemyProjectiles.get(j).getY()))
+                {
+            		if (knight.removeHealth(enemyProjectiles.get(j).getDamage()))
+            			dying=true;
+            		enemyProjectiles.remove(j);             			
+                }	
+            }
+        } 
     }
     
     //draw the various different directions of movement
-    private void drawPacman (Graphics2D g2d)
+    private void drawCharacter (Graphics2D g2d)
     {
-       pacman.draw(g2d);
+       knight.draw(g2d);
     }
     
     
@@ -437,7 +537,9 @@ public class Board extends JPanel
         int r, c;
         Color dotColor = new Color (192, 192, 0);
         Color mazeColor = new Color (104, 104, 104);
-
+        
+        
+        
         //walk through all blocks on the screen
         for (r = 0; r < SCREEN_SIZE; r += BLOCK_SIZE)
         {
@@ -516,11 +618,26 @@ public class Board extends JPanel
                 	 g2d.fill(new Ellipse2D.Double(c+6,r+6,10,10));
                 }
                 //comment out this block to reveal entire map
-//                if ((screenData[gr][gc] & HIDDEN) != 0)
-//                {
-//                	g2d.setColor(Color.BLACK);
-//                	g2d.fillRect(c, r, BLOCK_SIZE,BLOCK_SIZE );
-//                }
+                if ((screenData[gr][gc] & HIDDEN) != 0)
+                {
+                	g2d.setColor(Color.BLACK);
+                	g2d.fillRect(c, r, BLOCK_SIZE,BLOCK_SIZE );
+                }
+            }
+            
+        }
+        
+        if (projectiles.size() >= 1) {
+        	for (int i=0; i<projectiles.size();i++) {
+        		projectiles.get(i).move();
+            	projectiles.get(i).draw(g2d);
+            }
+        }
+        
+        if (enemyProjectiles.size() >= 1) {
+        	for (int i=0; i<enemyProjectiles.size();i++) {
+        		enemyProjectiles.get(i).move();
+            	enemyProjectiles.get(i).draw(g2d);
             }
         }
     }
@@ -538,57 +655,17 @@ public class Board extends JPanel
 
         drawMaze (g2d);
         drawScore (g2d);
-        attack(g2d);
 
         if (inGame)
             playGame (g2d);
+        else if (winGame) {
+        	showWinScreen(g2d);
+        }
         else
-            showIntroScreen (g2d);
-        
-    }
-    
-    public void attack(Graphics g2d) {
-    	damage = pacman.getDamage();
-    	int dir = pacman.getDirection();
-    	int dx =0;
-    	int dy =0;
-    	switch (dir) {
-    	case 0: 
-    		dy = -1; 
-    		dx=0;
-    		break;
-    	case 1: 
-    		dy = 1; 
-    		dx=0;
-    		break;
-    	case 2: 
-    		dx = 1; 
-    		dy=0;
-    		break;
-    	case 3: 
-    		dx = -1;
-    		dy=0;
-    		break;
-    	//default: dx=0; dy=0;
-    	}
-    	if ((dy !=0 || dx!=0) && attacking) {
-    		g2d.drawImage (attackImage, pacman.getX() + BLOCK_SIZE*dx, 
-    				pacman.getY() + BLOCK_SIZE*dy, 22, 22, this);
-    		
-    		for (int i = 0; i < numEnemies; i++)
-            {      	          
-                if (enemies.get(i).contains (pacman.getX() + BLOCK_SIZE*dx, pacman.getY() + BLOCK_SIZE*dy))
-                {
-                	numEnemies--;
-                	enemies.get(i).removeSpawn();
-                    enemies.remove(i);
-                }   
-            }
-    	}
-    	
-    	
-    	
+            showIntroScreen (g2d);   	
+
     }	
+
         
     //take input from various keyEvents
     protected class PacKeyAdapter extends KeyAdapter
@@ -601,22 +678,22 @@ public class Board extends JPanel
             {
                 if (key == KeyEvent.VK_LEFT)
                 {
-                    pacman.updateReq(-1, 0);
+                    knight.updateReq(-1, 0);
                     moving[0]= true;
                 }
                 else if (key == KeyEvent.VK_RIGHT)
                 {
-                    pacman.updateReq(1, 0);
+                    knight.updateReq(1, 0);
                     moving[1]= true;
                 }
                 else if (key == KeyEvent.VK_UP)
                 {
-                    pacman.updateReq(0, -1);
+                    knight.updateReq(0, -1);
                     moving[2]= true;
                 }
                 else if (key == KeyEvent.VK_DOWN)
                 {
-                	pacman.updateReq(0, 1);
+                	knight.updateReq(0, 1);
                 	moving[3]= true;
                 }
                 else if (key == KeyEvent.VK_ESCAPE && timer.isRunning())
@@ -630,10 +707,30 @@ public class Board extends JPanel
                     else
                         timer.start();
                 }
-                
-                if (key == KeyEvent.VK_SPACE)
+                else if (key == KeyEvent.VK_A)
                 {
-                	 attacking=true;
+                	//aim left
+                	attackDir =0;
+                }
+                else if (key == KeyEvent.VK_W)
+                {
+                	//aim up
+                	attackDir = 2;
+                }
+                else if (key == KeyEvent.VK_S)
+                {
+                	//aim down
+                	attackDir = 3;
+                }
+                else if (key == KeyEvent.VK_D)
+                {
+                	//aim right
+                	attackDir = 1;
+                }
+                if (key == KeyEvent.VK_SPACE && shootTime>= shootTimeLimit)
+                {
+                	 projectiles.add(knight.attack(attackDir));
+                	 shootTime=0;
                 }
             }
             else if (key == 's' || key == 'S')
@@ -653,11 +750,10 @@ public class Board extends JPanel
             	case KeyEvent.VK_RIGHT: moving[1]= false;
             	case KeyEvent.VK_UP: moving[2]= false;
             	case KeyEvent.VK_DOWN: moving[3] = false;
-            	case KeyEvent.VK_SPACE: attacking = false;
             }
             
            if (!moving[0] && !moving[1] && !moving[2] && !moving[3]) {
-        	   pacman.updateReq(0, 0);
+        	   knight.updateReq(0, 0);
            }
         }
     }

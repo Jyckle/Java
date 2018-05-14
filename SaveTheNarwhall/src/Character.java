@@ -19,17 +19,14 @@ public class Character {
     private int block_size;
     
 	private int screenData[][];
-
-	private final static int LEFT_WALL = 1;
-	private final static int RIGHT_WALL = 4;
-	private final static int TOP_WALL = 2;
-	private final static int BOTTOM_WALL = 8;
 	
 	//setup the stats of the character
 	private final static int STARTING_HEALTH = 350;
 	private int health= STARTING_HEALTH;
-	private int attackPower=6;
+	private int attackPower=10;
 	
+	private Image attackImages[] = {new ImageIcon("char_pics/lSpear.png").getImage(), new ImageIcon("char_pics/rSpear.png").getImage(), 
+			new ImageIcon("char_pics/uSpear.png").getImage(), new ImageIcon("char_pics/dSpear.png").getImage()};
 
 	public Character (int screenData[][], int brd_x, int brd_y,
 			int block_size)
@@ -45,7 +42,7 @@ public class Character {
 		view_dx = -1;
 		view_dy = 0;
 		health = STARTING_HEALTH;
-		attackPower = 6;
+		attackPower = 10;
 	}
 
 	
@@ -95,10 +92,11 @@ public class Character {
 
 			if (req_dx != 0 || req_dy != 0)
 			{
-				if (!((req_dx == -1 && req_dy == 0 && (ch & LEFT_WALL) != 0)
-						|| (req_dx == 1 && req_dy == 0 && (ch & RIGHT_WALL) != 0)
-						|| (req_dx == 0 && req_dy == -1 && (ch & TOP_WALL) != 0)
-						|| (req_dx == 0 && req_dy == 1 && (ch & BOTTOM_WALL) != 0)))
+				if (!((req_dx == -1 && req_dy == 0 && ((ch & Board.LEFT_WALL) != 0)) 
+						|| (req_dx == 1 && req_dy == 0 && (ch & Board.RIGHT_WALL) != 0)
+						|| (req_dx == 0 && req_dy == -1 && (ch & Board.TOP_WALL) != 0)
+						|| (req_dx == 0 && req_dy == 1 && (ch & Board.BOTTOM_WALL) != 0)
+						|| ((screenData[py+req_dy][px+req_dx] & Board.BLOCKED) !=0)))
 				{
 					dx = req_dx;
 					dy = req_dy;
@@ -108,10 +106,11 @@ public class Character {
 			}
 
 			// Check for standstill
-			if ((dx == -1 && dy == 0 && (ch & LEFT_WALL) != 0)
-					|| (dx == 1 && dy == 0 && (ch & RIGHT_WALL) != 0)
-					|| (dx == 0 && dy == -1 && (ch & TOP_WALL) != 0)
-					|| (dx == 0 && dy == 1 && (ch & BOTTOM_WALL) != 0))
+			if ((dx == -1 && dy == 0 && (ch & Board.LEFT_WALL) != 0)
+					|| (dx == 1 && dy == 0 && (ch & Board.RIGHT_WALL) != 0)
+					|| (dx == 0 && dy == -1 && (ch & Board.TOP_WALL) != 0)
+					|| (dx == 0 && dy == 1 && (ch & Board.BOTTOM_WALL) != 0)
+					|| ((screenData[py+dy][px+dx] & Board.BLOCKED) !=0))
 			{
 				dx = 0;
 				dy = 0;
@@ -141,10 +140,6 @@ public class Character {
 		this.req_dy = req_dy;
 	}
 	
-	public int getDamage() {
-		return attackPower;
-	}
-	
 	public boolean removeHealth(int damage) {
 		health = health - damage;
 		if (health <= 0) {
@@ -165,6 +160,21 @@ public class Character {
 		//2 = right, 3 = left
 	}
 	
+	public Projectile attack(int dir) {
+		return new Projectile(dir,x,y,attackPower,attackImages);
+	}
 	
+	public void setPos(int x, int y) {
+		this.x = x*block_size;
+		this.y =y*block_size;
+	}
+	
+	public boolean contains (int r, int c) {
+		if (r > (x - 12) && r < (x + 12)
+				&& c > (y - 12) && c < y + 12)
+			return true;
+		else
+			return false;
+	}
 
 }

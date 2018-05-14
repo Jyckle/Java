@@ -5,6 +5,7 @@
 import java.awt.*;
 import javax.swing.*;
 
+@SuppressWarnings("serial")
 public class SaveTheNarwhal extends JFrame {
 
 	//Constructor class, calls the method initUI
@@ -16,7 +17,8 @@ public class SaveTheNarwhal extends JFrame {
 	//Adds the board to the frame, sets the title and default close operation, and sets the location to the center of the screen
     private void initUI() {
         
-    	DungeonGenerator d = new DungeonGenerator(8,30,25);
+    	//change number of levels here
+    	DungeonGenerator d = new DungeonGenerator(6,30,25);
 		int levels[][][]= d.getLevels();
     	
         add (new Board(levels));

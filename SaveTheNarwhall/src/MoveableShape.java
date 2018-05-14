@@ -14,5 +14,4 @@ public interface MoveableShape
 	// this method is to determine if the given r,c fall within the shape's coordinates
 	boolean contains (int r, int c);	
 	
-	void removeSpawn();
 }
